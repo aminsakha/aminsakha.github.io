@@ -275,7 +275,7 @@ function Header({ lang, nav, campaign = false }) {
   const rtl = lang === "fa";
   const home = rtl ? "/fa/" : "/";
   const cta = campaign ? "ثبت‌نام" : rtl ? "مسترکلاس AI" : "AI masterclass";
-  const ctaHref = campaign ? "#register" : "/ai/";
+  const ctaHref = campaign ? TELEGRAM_URL : "/ai/";
 
   return (
     <header className="site-header">
@@ -292,7 +292,7 @@ function Header({ lang, nav, campaign = false }) {
       )}
       <div className="header-actions">
         <LanguageSwitch lang={lang} campaign={campaign} />
-        <a className="button button-small" href={ctaHref}>{cta}<Arrow rtl={rtl} /></a>
+        <a className="button button-small" href={ctaHref} target={campaign ? "_blank" : undefined} rel={campaign ? "noreferrer" : undefined}>{cta}<Arrow rtl={rtl} /></a>
         {!campaign && (
           <button className="menu-button" type="button" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={rtl ? "بازکردن منو" : "Open menu"}>
             {open ? <X size={24} /> : <List size={24} />}
@@ -494,7 +494,7 @@ function CampaignPage() {
       platform: "مکتب‌خونه",
       title: "آموزش اندروید از پایه تا پیشرفته",
       body: "یک دوره جامع و پروژه‌محور؛ از Kotlin تا ساخت اپلیکیشن واقعی. نزدیک ۹۰۰ دانشجو و امتیاز ۴٫۶ از ۵.",
-      fact: "۶۵ ساعت آموزش · نزدیک ۹۰۰ دانشجو",
+      fact: "۲۲ ساعت ویدئو · نزدیک ۹۰۰ دانشجو",
       href: "https://maktabkhooneh.org/course/%D8%A2%D9%85%D9%88%D8%B2%D8%B4-%D8%A7%D9%86%D8%AF%D8%B1%D9%88%DB%8C%D8%AF-%D9%BE%D8%A7%DB%8C%D9%87-%D9%BE%DB%8C%D8%B4%D8%B1%D9%81%D8%AA%D9%87-mk2113/",
       cta: "دیدن دوره در مکتب‌خونه",
     },
@@ -502,7 +502,7 @@ function CampaignPage() {
       platform: "سکان آکادمی",
       title: "دوره آموزش زبان برنامه‌نویسی Kotlin",
       body: "آموزش قدم‌به‌قدم زبانی که پایه توسعه مدرن اندرویده؛ با تمرکز روی فهمیدن منطق، نه حفظ‌کردن سینتکس.",
-      fact: "آموزش ویدیویی Kotlin",
+      fact: "۷ ساعت و ۵۰ دقیقه آموزش ویدیویی",
       href: "https://sokanac.ir/ktQ",
       cta: "دیدن دوره در سکان",
     },
@@ -510,7 +510,7 @@ function CampaignPage() {
       platform: "مجتمع فنی تهران",
       title: "مدرس Kotlin، Android و Jetpack Compose",
       body: "تجربه تدریس حضوری و آنلاین در شعب ونک و نارمک؛ جایی که سؤال‌های واقعی دانشجوها بخشی از خود کلاس بوده.",
-      fact: "تدریس در شعب ونک و نارمک",
+      fact: "۳۵۰ ساعت آموزش حضوری",
       href: "https://mftplus.com/",
       cta: "دیدن مجتمع فنی تهران",
     },
@@ -569,12 +569,12 @@ function CampaignPage() {
             </div>
             <div className="campaign-price">
               <span>هزینه ثبت‌نام</span>
-              <strong>۲٬۹۹۰٬۰۰۰ تومان</strong>
-              <small>با کد معرفی ۱۰٪ کمتر: ۲٬۶۹۱٬۰۰۰ تومان</small>
-              <a href="#referral">کد معرفی چطور هزینه خودم رو هم کم می‌کنه؟</a>
+              <strong>۹۹۰٬۰۰۰ تومان</strong>
+              <small>با هر معرفی موفق، ۱۰٪ از پرداخت خودت کم می‌شه</small>
+              <a href="#referral">چطور با ۱۰ معرفی رایگان شرکت کنم؟</a>
             </div>
             <div className="button-row">
-              <a className="button" href="#register">می‌خوام ثبت‌نام کنم<Arrow rtl /></a>
+              <a className="button" href={TELEGRAM_URL} target="_blank" rel="noreferrer">ثبت‌نام از طریق تلگرام<Arrow rtl /></a>
               <a className="button button-ghost" href="#agenda">اول برنامه رو ببینم<Arrow rtl /></a>
             </div>
           </div>
@@ -598,15 +598,15 @@ function CampaignPage() {
           <div className="instructor-copy">
             <p className="eyebrow">قبل از هر چیزی، من کی‌ام؟</p>
             <h2 id="instructor-title">من امین سخا هستم؛ مهندس اندروید و مدرسی که AI بخشی از کار هرروزشه.</h2>
-            <p>بیشتر از ۵ ساله روی محصول واقعی کار می‌کنم؛ از اپ‌های رسانه‌ای با صدها هزار مخاطب تا محصول شخصی خودم، MetroYar. در کنارش Android، Kotlin و Jetpack Compose رو در مکتب‌خونه، سکان آکادمی و مجتمع فنی تهران تدریس کردم.</p>
+            <p>من فارغ‌التحصیل مهندسی کامپیوتر از دانشگاه شهید بهشتی‌ام و بیشتر از ۵ ساله روی محصول واقعی کار می‌کنم؛ از اپ‌های رسانه‌ای با صدها هزار مخاطب تا محصول شخصی خودم، MetroYar. در کنارش Android، Kotlin و Jetpack Compose رو در مکتب‌خونه، سکان آکادمی و مجتمع فنی تهران تدریس کردم.</p>
             <div className="student-origin-note">
               <Sparkle size={24} weight="fill" aria-hidden="true" />
               <p><strong>این مسترکلاس از یک درخواست واقعی شروع شد.</strong> دانشجوها و همکارهایی که روش کارم با AI رو دیده بودن، مدت‌ها می‌گفتن این تجربه رو یک‌جا و کاربردی آموزش بده؛ بالاخره تصمیم گرفتم انجامش بدم.</p>
             </div>
             <div className="instructor-facts" aria-label="خلاصه سابقه آموزشی امین سخا">
-              <span><strong>۶۵ ساعت</strong>آموزش منتشرشده</span>
+              <span><strong>نزدیک ۳۰ ساعت</strong>آموزش آنلاین منتشرشده</span>
+              <span><strong>۳۵۰ ساعت</strong>آموزش حضوری در مجتمع فنی</span>
               <span><strong>نزدیک ۹۰۰ نفر</strong>دانشجوی دوره اندروید</span>
-              <span><strong>۴٫۶ از ۵</strong>امتیاز در مکتب‌خونه</span>
             </div>
           </div>
         </section>
@@ -654,33 +654,35 @@ function CampaignPage() {
         <section className="referral-section section" id="referral">
           <div className="referral-intro">
             <p className="eyebrow">کد معرفی</p>
-            <span className="referral-badge"><UsersThree size={18} weight="fill" />هر دو نفر ۱۰٪ سود می‌کنن</span>
-            <h2>دوستت ارزون‌تر میاد؛ هزینه خودت هم با هر معرفی کمتر می‌شه.</h2>
-            <p>لازم نیست اول دوره رو بخری. از ادمین یک کد بگیر، برای دوستات بفرست و به‌ازای هر ثبت‌نام موفق، ۳۰۰هزار تومان اعتبار برای خودت جمع کن.</p>
+            <span className="referral-badge"><UsersThree size={18} weight="fill" />هر معرفی موفق = ۱۰٪ تخفیف بیشتر برای تو</span>
+            <h2>دوستت با کد تو تخفیف می‌گیره؛ پرداخت خودت هم قدم‌به‌قدم کمتر می‌شه.</h2>
+            <p>قبل از پرداخت خودت، از ادمین تلگرام یک کد دعوت بگیر و برای دوستات بفرست. هر دوستی که با کد تو ثبت‌نام و پرداختش تأیید بشه، ۱۰٪ از هزینه خودت کم می‌کنه.</p>
+            <a className="button" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={20} weight="fill" />گرفتن کد از ادمین تلگرام</a>
           </div>
           <div className="referral-highlight">
             <Gift size={32} weight="fill" />
             <span>مثال خیلی ساده</span>
-            <strong>۱۰ معرفی موفق = ۳ میلیون تومان اعتبار</strong>
-            <p>یعنی هزینه ۲٬۹۹۰٬۰۰۰ تومانی مسترکلاس کامل پوشش داده می‌شه و عملاً رایگان شرکت می‌کنی.</p>
+            <strong>۱۰ معرفی موفق × ۱۰٪ = شرکت کاملاً رایگان</strong>
+            <p>با ۵ معرفی، نصف هزینه رو می‌پردازی؛ با ۱۰ معرفی، هزینه ۹۹۰٬۰۰۰ تومانی مسترکلاس کامل حذف می‌شه.</p>
           </div>
           <div className="referral-benefits">
-            <article><UsersThree size={24} weight="fill" /><span>سود دوستت</span><strong>۱۰٪ تخفیف</strong><p>به‌جای ۲٬۹۹۰٬۰۰۰ تومان، با کد تو ۲٬۶۹۱٬۰۰۰ تومان پرداخت می‌کنه.</p></article>
-            <article><Coins size={24} weight="fill" /><span>سود خودت</span><strong>۳۰۰هزار تومان</strong><p>برای هر پرداخت تأییدشده، این مبلغ به اعتبار معرفی‌های تو اضافه می‌شه.</p></article>
+            <article><UsersThree size={24} weight="fill" /><span>سود دوستت</span><strong>۱۰٪ تخفیف</strong><p>با کد تو به‌جای ۹۹۰٬۰۰۰ تومان، ۸۹۱٬۰۰۰ تومان پرداخت می‌کنه.</p></article>
+            <article><Coins size={24} weight="fill" /><span>سود خودت</span><strong>۱۰٪ کمتر برای هر نفر</strong><p>هر پرداخت تأییدشده، ۹۹٬۰۰۰ تومان از مبلغ نهایی ثبت‌نام خودت کم می‌کنه.</p></article>
           </div>
           <div className="referral-steps">
-            <p><strong>۱</strong>کد معرفی را از ادمین بگیر و برای دوستانت بفرست.</p>
-            <p><strong>۲</strong>دوستت موقع ثبت‌نام کد رو اعلام می‌کنه و ۱۰٪ کمتر پرداخت می‌کنه.</p>
-            <p><strong>۳</strong>به محض تأیید پرداختش، ۳۰۰هزار تومان برای تو ثبت می‌شه.</p>
+            <p><strong>۱</strong>قبل از پرداخت خودت، کد دعوت رو از ادمین تلگرام بگیر و برای دوستات بفرست.</p>
+            <p><strong>۲</strong>دوستت کد رو موقع ثبت‌نام اعلام می‌کنه، با ۱۰٪ تخفیف پرداخت می‌کنه و پرداختش تأیید می‌شه.</p>
+            <p><strong>۳</strong>بعد از نهایی‌شدن دعوت‌ها، خودت پیام می‌دی و به‌ازای هر پرداخت تأییدشده ۱۰٪ کمتر می‌پردازی.</p>
           </div>
           <div className="referral-rules">
             <div><p className="eyebrow">قوانین شفاف معرفی</p><h3>قبل از فرستادن کد این چند مورد رو بدون.</h3></div>
             <ul>
-              <li><Check size={18} weight="bold" />گرفتن کد رایگانه و حتی قبل از ثبت‌نام خودت هم می‌تونی کد داشته باشی.</li>
-              <li><Check size={18} weight="bold" />کد باید قبل از پرداختِ دوستت به ادمین اعلام بشه؛ بعد از پرداخت قابل اضافه‌کردن نیست.</li>
+              <li><Check size={18} weight="bold" />گرفتن کد از ادمین تلگرام رایگانه و باید قبل از پرداخت خودت انجام بشه.</li>
+              <li><Check size={18} weight="bold" />کد باید قبل از پرداخت دوستت به ادمین اعلام بشه؛ بعد از پرداخت قابل اضافه‌کردن نیست.</li>
               <li><Check size={18} weight="bold" />هر نفر فقط می‌تونه از یک کد استفاده کنه و معرفی خودت با کد خودت حساب نمی‌شه.</li>
-              <li><Check size={18} weight="bold" />معرفی موفق یعنی پرداخت دوستت توسط ادمین تأیید شده باشه.</li>
-              <li><Check size={18} weight="bold" />اعتبارها تا پوشش کامل هزینه ثبت‌نامت جمع می‌شن؛ اگر قبلاً پرداخت کردی، تسویه از طریق ادمین هماهنگ می‌شه.</li>
+              <li><Check size={18} weight="bold" />معرفی موفق یعنی دوستت پرداخت کرده باشه و پرداختش توسط ادمین تأیید شده باشه.</li>
+              <li><Check size={18} weight="bold" />برای استفاده از تخفیف دعوت، اول پرداخت دوستات باید تأیید بشه و بعد مبلغ نهایی خودت رو پرداخت می‌کنی.</li>
+              <li><Check size={18} weight="bold" />تخفیف دعوت حداکثر تا ۱۰۰٪ هزینه دوره حساب می‌شه، نقدی نیست و معرفی بیشتر از ۱۰ نفر مبلغ اضافه ایجاد نمی‌کنه.</li>
             </ul>
           </div>
         </section>
@@ -732,7 +734,7 @@ function CampaignPage() {
             <div className="register-note"><SealCheck size={20} weight="fill" />بعد از تأیید پرداخت، مستقیم وارد کانال اختصاصی شرکت‌کننده‌ها می‌شی.</div>
           </div>
           <div className="register-actions">
-            <a className="button button-light" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={20} weight="fill" />پیام به @amin3379</a>
+            <a className="button button-light" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={20} weight="fill" />ثبت‌نام در تلگرام</a>
             <button className="button button-ghost" type="button" onClick={copyMessage}>{copied ? "متن کپی شد" : "کپی متن ثبت‌نام"}</button>
           </div>
         </section>

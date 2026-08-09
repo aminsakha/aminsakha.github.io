@@ -193,7 +193,8 @@ img { display: block; max-width: 100%; }
 .referral-section { margin-block: 108px; padding: 58px; display: grid; grid-template-columns: 1.08fr .92fr; gap: 24px 34px; border: 1px solid #826d2d; border-radius: 18px; background: #14180f; }
 .referral-section .eyebrow { color: var(--yellow); }
 .referral-section h2 { margin: 18px 0; font-size: clamp(38px, 4vw, 56px); line-height: 1.16; letter-spacing: -.04em; }
-.referral-intro > p:last-child { margin: 0; max-width: 700px; color: #bbc3cf; font-size: 17px; line-height: 1.85; }
+.referral-intro > p:not(.eyebrow) { margin: 0; max-width: 700px; color: #bbc3cf; font-size: 17px; line-height: 1.85; }
+.referral-intro > .button { width: max-content; max-width: 100%; margin-top: 24px; }
 .referral-badge { width: max-content; max-width: 100%; padding: 9px 13px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #806927; border-radius: 999px; color: #ffdc78; background: #1f2115; font-size: 13px; font-weight: 800; }
 .referral-highlight { padding: 30px; display: flex; flex-direction: column; justify-content: center; border: 1px solid #947a2b; border-radius: 14px; background: #222416; }
 .referral-highlight > svg { color: #ffd968; }
