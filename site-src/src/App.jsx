@@ -95,6 +95,11 @@ const copy = {
         intro:
           "A few examples of ownership across consumer products, media systems, and offline-first experiences.",
       },
+      experience: {
+        kicker: "EXPERIENCE",
+        title: "Five years across real products and engineering teams.",
+        intro: "From consumer media products to independent product ownership, these are the teams and products that shaped how I build.",
+      },
       teaching: {
         kicker: "TEACHING",
         title: "I teach the decisions behind the code.",
@@ -126,6 +131,14 @@ const copy = {
         body: "Performance, modular architecture, downloads, and media playback across products reaching more than 700K users.",
         facts: ["Media3", "Jetpack Compose", "Production reliability"],
       },
+    ],
+    experienceItems: [
+      ["Dotin · Kidzy", "Senior Android Engineer", "2025 — Present"],
+      ["Didimoon", "Lead Mobile Developer", "2024 — 2025"],
+      ["Finto", "Android Developer", "2024"],
+      ["MetroYar", "Founder & Android Engineer", "2023 — Present"],
+      ["Danesh Rayan", "Android Developer", "2022 — 2023"],
+      ["Shahid Beheshti Science & Technology Park", "Android Developer", "2020 — 2022"],
     ],
     teachingItems: [
       ["Maktabkhooneh", "22-hour Android with Kotlin course"],
@@ -202,6 +215,11 @@ const copy = {
         title: "محصول واقعی، نه تمرین پورتفولیو.",
         intro: "نمونه‌هایی از مسئولیت‌پذیری محصولی در اپلیکیشن‌های مصرفی، مدیا و تجربه‌های آفلاین.",
       },
+      experience: {
+        kicker: "سابقه حرفه‌ای",
+        title: "بیشتر از ۵ سال تجربه در محصول و تیم‌های واقعی.",
+        intro: "از محصولات رسانه‌ای در مقیاس بالا تا ساخت محصول مستقل؛ تجربه‌هایی که روش کار و تصمیم‌گیری من را شکل داده‌اند.",
+      },
       teaching: {
         kicker: "تدریس",
         title: "فقط کد را آموزش نمی‌دهم؛ دلیل تصمیم‌ها را توضیح می‌دهم.",
@@ -231,6 +249,14 @@ const copy = {
         body: "پرفورمنس، معماری ماژولار، دانلود و پخش مدیا در محصولاتی با بیش از ۷۰۰هزار مخاطب.",
         facts: ["Media3", "Jetpack Compose", "پایداری محصول"],
       },
+    ],
+    experienceItems: [
+      ["Dotin · Kidzy", "Senior Android Engineer", "۱۴۰۴ تا امروز"],
+      ["Didimoon", "Lead Mobile Developer", "۱۴۰۳ تا ۱۴۰۴"],
+      ["Finto", "Android Developer", "۱۴۰۳"],
+      ["MetroYar", "Founder & Android Engineer", "۱۴۰۲ تا امروز"],
+      ["Danesh Rayan", "Android Developer", "۱۴۰۱ تا ۱۴۰۲"],
+      ["پارک علم و فناوری شهید بهشتی", "Android Developer", "۱۳۹۹ تا ۱۴۰۱"],
     ],
     teachingItems: [
       ["مکتب‌خونه", "دوره ۲۲ ساعته برنامه‌نویسی اندروید با کاتلین"],
@@ -395,6 +421,17 @@ function HomePage({ lang }) {
           </div>
         </section>
 
+        <section className="career-section section section-spaced" id="experience">
+          <SectionHeading {...t.sections.experience} />
+          <div className="experience-grid">
+            {t.experienceItems.map(([company, role, period]) => (
+              <article className="experience-card" key={company}>
+                <header><div><span>{company}</span><h3>{role}</h3></div><time>{period}</time></header>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="teaching-section section section-spaced" id="teaching">
           <SectionHeading {...t.sections.teaching} />
           <div className="teaching-list">
@@ -456,39 +493,6 @@ function Footer({ t, rtl }) {
 function CampaignPage() {
   const [copied, setCopied] = useState(false);
 
-  const experience = [
-    {
-      company: "Dotin · Kidzy",
-      role: "Senior Android Engineer",
-      period: "۱۴۰۴ تا امروز",
-    },
-    {
-      company: "Didimoon",
-      role: "Lead Mobile Developer",
-      period: "۱۴۰۳ تا ۱۴۰۴",
-    },
-    {
-      company: "Finto",
-      role: "Android Developer",
-      period: "۱۴۰۳",
-    },
-    {
-      company: "MetroYar",
-      role: "Founder & Android Engineer",
-      period: "۱۴۰۲ تا امروز",
-    },
-    {
-      company: "Danesh Rayan",
-      role: "Android Developer",
-      period: "۱۴۰۱ تا ۱۴۰۲",
-    },
-    {
-      company: "پارک علم و فناوری شهید بهشتی",
-      role: "Android Developer",
-      period: "۱۳۹۹ تا ۱۴۰۱",
-    },
-  ];
-
   const teaching = [
     {
       platform: "مکتب‌خونه",
@@ -519,8 +523,8 @@ function CampaignPage() {
   useEffect(() => {
     document.documentElement.lang = "fa";
     document.documentElement.dir = "rtl";
-    document.title = "مسترکلاس ۹۰ دقیقه‌ای هوش مصنوعی کاربردی — امین سخا";
-    document.querySelector('meta[name="description"]')?.setAttribute("content", "مسترکلاس زنده امین سخا در Google Meet؛ آشنایی با ابزارهای به‌روز AI، روش درست دستور دادن و ساخت خروجی حرفه‌ای با مثال واقعی در ۹۰ دقیقه.");
+    document.title = "مسترکلاس هوش مصنوعی کاربردی با مهندس امین سخا";
+    document.querySelector('meta[name="description"]')?.setAttribute("content", "مسترکلاس زنده مهندس امین سخا در Google Meet؛ آشنایی با ابزارهای به‌روز AI، روش درست دستور دادن و ساخت خروجی حرفه‌ای با مثال واقعی در ۹۰ دقیقه.");
   }, []);
 
   const copyMessage = async () => {
@@ -559,7 +563,7 @@ function CampaignPage() {
       <main>
         <section className="campaign-hero section" id="top">
           <div className="campaign-hero-copy">
-            <p className="eyebrow">مسترکلاس زنده در Google Meet · فقط یک‌بار</p>
+            <p className="eyebrow">مسترکلاس زنده با مهندس امین سخا · فقط یک‌بار</p>
             <h1>در ۹۰ دقیقه یاد بگیر چطور با AI یک هفته کار را به یک روز تبدیل کنی.</h1>
             <p className="campaign-tagline">از یک درخواست ساده تا یک خروجی حرفه‌ای</p>
             <p>اگه از AI استفاده می‌کنی ولی هنوز هر بار باید از صفر شروع کنی و تهش هم معلوم نیست خروجی خوب درمیاد یا نه، این جلسه دقیقاً برای همینه. قرار نیست ۹۰ دقیقه اسم ابزار حفظ کنیم؛ با هم یک کار واقعی رو از مسئله تا خروجی جلو می‌بریم.</p>
@@ -583,8 +587,8 @@ function CampaignPage() {
             </div>
           </div>
           <figure className="campaign-photo">
-            <img src="/images/amin-teaching.jpg?v=20260809" alt="امین سخا در حال تدریس" />
-            <figcaption>تجربه واقعی، توضیح ساده، مثال قابل استفاده</figcaption>
+            <img src="/images/amin-teaching.jpg?v=20260809" alt="مهندس امین سخا در حال تدریس" />
+            <figcaption>مهندس امین سخا؛ مدرس و توسعه‌دهنده اندروید</figcaption>
           </figure>
         </section>
 
@@ -601,7 +605,7 @@ function CampaignPage() {
           </figure>
           <div className="instructor-copy">
             <p className="eyebrow">قبل از هر چیزی، من کی‌ام؟</p>
-            <h2 id="instructor-title">من امین سخا هستم؛ مهندس اندروید و مدرسی که AI بخشی از کار هرروزشه.</h2>
+            <h2 id="instructor-title">من مهندس امین سخا هستم؛ توسعه‌دهنده اندروید و مدرسی که AI بخشی از کار هرروزشه.</h2>
             <p>من فارغ‌التحصیل مهندسی کامپیوتر از دانشگاه شهید بهشتی‌ام و بیشتر از ۵ ساله روی محصول واقعی کار می‌کنم؛ از اپ‌های رسانه‌ای با صدها هزار مخاطب تا محصول شخصی خودم، MetroYar. در کنارش Android، Kotlin و Jetpack Compose رو در مکتب‌خونه، سکان آکادمی و مجتمع فنی تهران تدریس کردم.</p>
             <div className="student-origin-note">
               <Sparkle size={24} weight="fill" aria-hidden="true" />
@@ -618,9 +622,9 @@ function CampaignPage() {
         <section className="campaign-section experience-section section" id="experience">
           <SectionHeading kicker="در کنار تدریس" title="بیشتر از ۵ سال تجربه ساخت محصول واقعی هم پشت این کلاس قرار داره." intro="این تجربه باعث شده مثال‌های کلاس از جنس کار واقعی باشن، نه فقط چند سناریوی تئوری و ساختگی." />
           <div className="experience-grid">
-            {experience.map((item) => (
-              <article className="experience-card" key={item.company}>
-                <header><div><span>{item.company}</span><h3>{item.role}</h3></div><time>{item.period}</time></header>
+            {copy.fa.experienceItems.map(([company, role, period]) => (
+              <article className="experience-card" key={company}>
+                <header><div><span>{company}</span><h3>{role}</h3></div><time>{period}</time></header>
               </article>
             ))}
           </div>

@@ -85,7 +85,7 @@ img { display: block; max-width: 100%; }
 .section-heading { max-width: 780px; }
 .section-heading h2 { margin: 0; font-size: clamp(38px, 4.6vw, 65px); line-height: 1.02; letter-spacing: -.052em; }
 .section-heading > p:last-child:not(.eyebrow) { margin: 24px 0 0; max-width: 690px; color: var(--muted); font-size: 17px; line-height: 1.7; }
-.work-section, .teaching-section, .ai-section { border-bottom: 1px solid var(--line); }
+.work-section, .career-section, .teaching-section, .ai-section { border-bottom: 1px solid var(--line); }
 .project-grid { margin-top: 58px; display: grid; grid-template-columns: 1.4fr .6fr; gap: 22px; }
 .project { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
 .project h3 { margin: 0 0 18px; font-size: 40px; letter-spacing: -.04em; }
