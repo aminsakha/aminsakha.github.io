@@ -569,6 +569,10 @@ function CampaignPage() {
             </div>
             <div className="campaign-price">
               <span>هزینه ثبت‌نام</span>
+              <div className="campaign-price-offer">
+                <del>۱٬۹۹۰٬۰۰۰ تومان</del>
+                <b>۱ میلیون تومان تخفیف</b>
+              </div>
               <strong>۹۹۰٬۰۰۰ تومان</strong>
               <small>با هر معرفی موفق، ۱۰٪ از پرداخت خودت کم می‌شه</small>
               <a href="#referral">چطور با ۱۰ معرفی رایگان شرکت کنم؟</a>
@@ -611,6 +615,17 @@ function CampaignPage() {
           </div>
         </section>
 
+        <section className="campaign-section experience-section section" id="experience">
+          <SectionHeading kicker="در کنار تدریس" title="بیشتر از ۵ سال تجربه ساخت محصول واقعی هم پشت این کلاس قرار داره." intro="این تجربه باعث شده مثال‌های کلاس از جنس کار واقعی باشن، نه فقط چند سناریوی تئوری و ساختگی." />
+          <div className="experience-grid">
+            {experience.map((item) => (
+              <article className="experience-card" key={item.company}>
+                <header><div><span>{item.company}</span><h3>{item.role}</h3></div><time>{item.period}</time></header>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="campaign-section teaching-spotlight section" id="teaching">
           <SectionHeading kicker="سابقه تدریس" title="قبل از این مسترکلاس هم سال‌هاست آموزش می‌دم؛ می‌تونی نمونه‌هاش رو خودت ببینی." intro="اعتبار این جلسه فقط به سابقه کار با AI نیست. تجربه آموزش به من یاد داده موضوع پیچیده رو چطور ساده، مرحله‌به‌مرحله و قابل استفاده توضیح بدم." />
           <div className="teaching-card-grid">
@@ -624,6 +639,13 @@ function CampaignPage() {
                 <a href={item.href} target="_blank" rel="noreferrer">{item.cta}<Arrow rtl /></a>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="campaign-section section audience-section">
+          <SectionHeading kicker="این جلسه به درد چه کسی می‌خوره؟" title="اگر کار فکری انجام می‌دی و از AI خروجی واقعی می‌خوای، احتمالاً جای درستی اومدی." intro="لازم نیست برنامه‌نویس باشی یا از قبل صد تا ابزار بلد باشی؛ مهم اینه که یک کار واقعی داشته باشی که می‌خوای بهتر و سریع‌تر انجامش بدی." />
+          <div className="audience-grid">
+            {["برنامه‌نویس و مهندس", "طراح و تولیدکننده محتوا", "مدیر، فریلنسر و صاحب کسب‌وکار", "دانشجو و مدرس"].map((item) => <span key={item}><Check size={19} weight="bold" />{item}</span>)}
           </div>
         </section>
 
@@ -654,35 +676,32 @@ function CampaignPage() {
         <section className="referral-section section" id="referral">
           <div className="referral-intro">
             <p className="eyebrow">کد معرفی</p>
-            <span className="referral-badge"><UsersThree size={18} weight="fill" />هر معرفی موفق = ۱۰٪ تخفیف بیشتر برای تو</span>
-            <h2>دوستت با کد تو تخفیف می‌گیره؛ پرداخت خودت هم قدم‌به‌قدم کمتر می‌شه.</h2>
-            <p>قبل از پرداخت خودت، از ادمین تلگرام یک کد دعوت بگیر و برای دوستات بفرست. هر دوستی که با کد تو ثبت‌نام و پرداختش تأیید بشه، ۱۰٪ از هزینه خودت کم می‌کنه.</p>
+            <span className="referral-badge"><UsersThree size={18} weight="fill" />هر دوست = ۱۰٪ تخفیف برای هر دوتون</span>
+            <h2>دوستت رو دعوت کن؛ هم اون تخفیف می‌گیره، هم تو.</h2>
+            <p>کد دعوتت رو از ادمین تلگرام بگیر و برای دوستات بفرست. هر کسی با کد تو ثبت‌نام کنه، خودش ۱۰٪ کمتر می‌پردازه و بعد از تأیید پرداختش، ۱۰٪ هم از هزینه ثبت‌نام تو کم می‌شه.</p>
             <a className="button" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={20} weight="fill" />گرفتن کد از ادمین تلگرام</a>
           </div>
           <div className="referral-highlight">
             <Gift size={32} weight="fill" />
-            <span>مثال خیلی ساده</span>
-            <strong>۱۰ معرفی موفق × ۱۰٪ = شرکت کاملاً رایگان</strong>
-            <p>با ۵ معرفی، نصف هزینه رو می‌پردازی؛ با ۱۰ معرفی، هزینه ۹۹۰٬۰۰۰ تومانی مسترکلاس کامل حذف می‌شه.</p>
+            <span>حسابش خیلی ساده‌ست</span>
+            <strong>۱۰ دوست دعوت کن؛ رایگان شرکت کن</strong>
+            <p>هر معرفی موفق ۱۰٪ تخفیف بهت می‌ده. با ۵ نفر، نصف قیمت رو می‌پردازی و با ۱۰ نفر، تخفیفت به ۱۰۰٪ می‌رسه.</p>
           </div>
           <div className="referral-benefits">
-            <article><UsersThree size={24} weight="fill" /><span>سود دوستت</span><strong>۱۰٪ تخفیف</strong><p>با کد تو به‌جای ۹۹۰٬۰۰۰ تومان، ۸۹۱٬۰۰۰ تومان پرداخت می‌کنه.</p></article>
-            <article><Coins size={24} weight="fill" /><span>سود خودت</span><strong>۱۰٪ کمتر برای هر نفر</strong><p>هر پرداخت تأییدشده، ۹۹٬۰۰۰ تومان از مبلغ نهایی ثبت‌نام خودت کم می‌کنه.</p></article>
+            <article><UsersThree size={24} weight="fill" /><span>دوستت چقدر تخفیف می‌گیره؟</span><strong>۱۰٪</strong><p>با کد تو به‌جای ۹۹۰٬۰۰۰ تومان، ۸۹۱٬۰۰۰ تومان پرداخت می‌کنه.</p></article>
+            <article><Coins size={24} weight="fill" /><span>تو چقدر تخفیف می‌گیری؟</span><strong>برای هر دوست ۱۰٪</strong><p>تعداد دعوت‌هات محدود نیست و تخفیفت تا سقف ۱۰۰٪ روی هم جمع می‌شه.</p></article>
           </div>
           <div className="referral-steps">
-            <p><strong>۱</strong>قبل از پرداخت خودت، کد دعوت رو از ادمین تلگرام بگیر و برای دوستات بفرست.</p>
-            <p><strong>۲</strong>دوستت کد رو موقع ثبت‌نام اعلام می‌کنه، با ۱۰٪ تخفیف پرداخت می‌کنه و پرداختش تأیید می‌شه.</p>
-            <p><strong>۳</strong>بعد از نهایی‌شدن دعوت‌ها، خودت پیام می‌دی و به‌ازای هر پرداخت تأییدشده ۱۰٪ کمتر می‌پردازی.</p>
+            <p><strong>۱</strong>کد دعوتت رو از ادمین تلگرام بگیر.</p>
+            <p><strong>۲</strong>دوستات با کد تو ثبت‌نام می‌کنن و ۱۰٪ تخفیف می‌گیرن.</p>
+            <p><strong>۳</strong>بعد از تأیید پرداخت هر نفر، ۱۰٪ از هزینه خودت هم کم می‌شه.</p>
           </div>
           <div className="referral-rules">
-            <div><p className="eyebrow">قوانین شفاف معرفی</p><h3>قبل از فرستادن کد این چند مورد رو بدون.</h3></div>
+            <div><p className="eyebrow">فقط این چند نکته رو یادت باشه</p><h3>اول دوستات پرداخت می‌کنن؛ بعد تخفیف تو حساب می‌شه.</h3></div>
             <ul>
-              <li><Check size={18} weight="bold" />گرفتن کد از ادمین تلگرام رایگانه و باید قبل از پرداخت خودت انجام بشه.</li>
-              <li><Check size={18} weight="bold" />کد باید قبل از پرداخت دوستت به ادمین اعلام بشه؛ بعد از پرداخت قابل اضافه‌کردن نیست.</li>
-              <li><Check size={18} weight="bold" />هر نفر فقط می‌تونه از یک کد استفاده کنه و معرفی خودت با کد خودت حساب نمی‌شه.</li>
-              <li><Check size={18} weight="bold" />معرفی موفق یعنی دوستت پرداخت کرده باشه و پرداختش توسط ادمین تأیید شده باشه.</li>
-              <li><Check size={18} weight="bold" />برای استفاده از تخفیف دعوت، اول پرداخت دوستات باید تأیید بشه و بعد مبلغ نهایی خودت رو پرداخت می‌کنی.</li>
-              <li><Check size={18} weight="bold" />تخفیف دعوت حداکثر تا ۱۰۰٪ هزینه دوره حساب می‌شه، نقدی نیست و معرفی بیشتر از ۱۰ نفر مبلغ اضافه ایجاد نمی‌کنه.</li>
+              <li><Check size={18} weight="bold" />دوستت باید قبل از پرداخت، کد تو رو به ادمین اعلام کنه.</li>
+              <li><Check size={18} weight="bold" />بعد از تأیید پرداخت دوستات، تخفیف نهایی تو محاسبه می‌شه و بعد خودت پرداخت می‌کنی.</li>
+              <li><Check size={18} weight="bold" />تخفیف تا سقف ۱۰۰٪ هزینه مسترکلاس جمع می‌شه و امکان تبدیلش به پول نقد وجود نداره.</li>
             </ul>
           </div>
         </section>
@@ -696,24 +715,6 @@ function CampaignPage() {
                 <footer><UserCircle size={42} weight="duotone" /><div><strong>نام دانشجو</strong><span>دانشجوی دوره قبلی</span></div></footer>
               </article>
             ))}
-          </div>
-        </section>
-
-        <section className="campaign-section experience-section section" id="experience">
-          <SectionHeading kicker="در کنار تدریس" title="بیشتر از ۵ سال تجربه ساخت محصول واقعی هم پشت این کلاس قرار داره." intro="این بخش رو کوتاه نگه داشتم چون تمرکز اصلی این صفحه روی سابقه تدریسه؛ اما این تجربه محصولیه که باعث شده مثال‌های کلاس فقط تئوری نباشن." />
-          <div className="experience-grid">
-            {experience.map((item) => (
-              <article className="experience-card" key={item.company}>
-                <header><div><span>{item.company}</span><h3>{item.role}</h3></div><time>{item.period}</time></header>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="campaign-section section audience-section">
-          <SectionHeading kicker="این جلسه به درد چه کسی می‌خوره؟" title="اگر کار فکری انجام می‌دی و از AI خروجی واقعی می‌خوای، احتمالاً جای درستی اومدی." intro="لازم نیست برنامه‌نویس باشی یا از قبل صد تا ابزار بلد باشی؛ مهم اینه که یک کار واقعی داشته باشی که می‌خوای بهتر و سریع‌تر انجامش بدی." />
-          <div className="audience-grid">
-            {["برنامه‌نویس و مهندس", "طراح و تولیدکننده محتوا", "مدیر، فریلنسر و صاحب کسب‌وکار", "دانشجو و مدرس"].map((item) => <span key={item}><Check size={19} weight="bold" />{item}</span>)}
           </div>
         </section>
 

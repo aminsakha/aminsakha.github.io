@@ -141,7 +141,10 @@ img { display: block; max-width: 100%; }
 .campaign-meta svg { color: #6e98ff; }
 .campaign-price { margin: 28px 0 30px; padding-inline-start: 20px; border-inline-start: 3px solid var(--yellow); display: grid; gap: 5px; }
 .campaign-price span, .campaign-price small { color: var(--muted); }
-.campaign-price strong { font-size: 30px; }
+.campaign-price-offer { margin-top: 4px; display: flex; flex-wrap: wrap; align-items: center; gap: 9px 12px; }
+.campaign-price-offer del { color: #8791a2; font-size: 16px; text-decoration-color: #ef6a6a; text-decoration-thickness: 2px; }
+.campaign-price-offer b { padding: 5px 9px; border: 1px solid #7c6520; border-radius: 999px; color: #ffe28b; background: #211d10; font-size: 11px; }
+.campaign-price strong { color: #fff; font-size: 34px; line-height: 1.3; }
 .campaign-price a { width: max-content; max-width: 100%; margin-top: 7px; color: #ffd567; font-size: 13px; font-weight: 800; }
 .campaign-proof { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--line); }
 .campaign-proof article { min-height: 132px; padding: 28px; display: flex; align-items: center; gap: 16px; }
