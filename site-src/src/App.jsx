@@ -6,9 +6,14 @@ import {
   BookOpen,
   BracketsCurly,
   Briefcase,
+  CalendarCheck,
+  ChalkboardTeacher,
+  ChatCircleText,
   Check,
   Code,
+  Coins,
   EnvelopeSimple,
+  Gift,
   GithubLogo,
   GraduationCap,
   LinkedinLogo,
@@ -16,8 +21,11 @@ import {
   MagicWand,
   MapPin,
   Play,
+  SealCheck,
   Sparkle,
   TelegramLogo,
+  UsersThree,
+  VideoCamera,
   X,
 } from "@phosphor-icons/react";
 
@@ -448,33 +456,85 @@ function Footer({ t, rtl }) {
 function CampaignPage() {
   const [copied, setCopied] = useState(false);
 
+  const experience = [
+    {
+      company: "Dotin · Kidzy",
+      role: "Senior Android Engineer",
+      period: "۱۴۰۴ تا امروز",
+      body: "روی Parande و Vidzy کار می‌کنم؛ محصولاتی با بیش از ۷۰۰هزار مخاطب. تمرکزم روی پرفورمنس، پایداری، معماری ماژولار، Compose و Media3 است.",
+      tags: ["+۷۰۰هزار مخاطب", "پرفورمنس", "Media3"],
+    },
+    {
+      company: "Didimoon",
+      role: "Lead Mobile Developer",
+      period: "۱۴۰۳ تا ۱۴۰۴",
+      body: "تجربه‌های VOD و UGC را با Compose، Media3 و FFmpeg توسعه دادم و روی CI/CD و پایه‌های KMM هم کار کردم.",
+      tags: ["VOD", "Compose", "FFmpeg"],
+    },
+    {
+      company: "Finto",
+      role: "Android Developer",
+      period: "۱۴۰۳",
+      body: "بخش‌هایی از یک اپ قدیمی Java را به Kotlin و Compose Multiplatform منتقل کردم و درگیر Bluetooth، دوربین و سرویس‌های پس‌زمینه بودم.",
+      tags: ["Kotlin", "CMP", "سخت‌افزار"],
+    },
+    {
+      company: "MetroYar",
+      role: "Founder & Android Engineer",
+      period: "۱۴۰۲ تا امروز",
+      body: "یک محصول آفلاین را از ایده و معماری تا انتشار، رشد و پشتیبانی جلو بردم؛ با بیش از ۵۰هزار کاربر در مارکت‌ها.",
+      tags: ["+۵۰هزار کاربر", "Offline-first", "مالکیت محصول"],
+    },
+    {
+      company: "Danesh Rayan",
+      role: "Android Developer",
+      period: "۱۴۰۱ تا ۱۴۰۲",
+      body: "یک کلاینت سازمانی BPMS را از Java و XML به Kotlin و Compose نزدیک کردم و کنار توسعه، منتورینگ اعضای جوان‌تر تیم را هم داشتم.",
+      tags: ["Enterprise", "Compose", "Mentoring"],
+    },
+    {
+      company: "پارک علم و فناوری شهید بهشتی",
+      role: "Android Developer",
+      period: "۱۳۹۹ تا ۱۴۰۱",
+      body: "روی محصولات دسترس‌پذیری، OCR، عصای هوشمند و اپ‌های متصل به سخت‌افزار کار کردم؛ جایی که خطا واقعاً هزینه داشت.",
+      tags: ["Accessibility", "OCR", "Hardware"],
+    },
+  ];
+
   useEffect(() => {
     document.documentElement.lang = "fa";
     document.documentElement.dir = "rtl";
     document.title = "مسترکلاس ۹۰ دقیقه‌ای هوش مصنوعی کاربردی — امین سخا";
-    document.querySelector('meta[name="description"]')?.setAttribute("content", "در ۹۰ دقیقه یاد بگیر چطور با AI یک هفته کار را به یک روز تبدیل کنی؛ با مثال‌های واقعی و ورک‌فلوهای قابل استفاده.");
+    document.querySelector('meta[name="description"]')?.setAttribute("content", "مسترکلاس زنده امین سخا در Google Meet؛ در ۹۰ دقیقه یاد بگیر چطور با AI یک هفته کار را به یک روز تبدیل کنی، با مثال واقعی و ورک‌فلو قابل تکرار.");
   }, []);
 
   const copyMessage = async () => {
-    const message = "سلام، برای ثبت‌نام در مسترکلاس ۹۰ دقیقه‌ای هوش مصنوعی پیام می‌دهم. نام و نام خانوادگی: ... کد معرفی: ...";
+    const message = "سلام، برای ثبت‌نام مسترکلاس ۹۰ دقیقه‌ای AI پیام می‌دم.\nنام و نام خانوادگی: ...\nکد معرفی (اگر دارم): ...";
+    const legacyCopy = () => {
+      const field = document.createElement("textarea");
+      field.value = message;
+      field.setAttribute("readonly", "");
+      field.style.position = "fixed";
+      field.style.opacity = "0";
+      document.body.appendChild(field);
+      field.select();
+      const succeeded = document.execCommand("copy");
+      field.remove();
+      return succeeded;
+    };
+
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(message);
+      const clipboard = globalThis.navigator?.clipboard;
+      if (clipboard?.writeText && window.isSecureContext) {
+        await clipboard.writeText.call(clipboard, message);
+        setCopied(true);
       } else {
-        const field = document.createElement("textarea");
-        field.value = message;
-        field.setAttribute("readonly", "");
-        field.style.position = "fixed";
-        field.style.opacity = "0";
-        document.body.appendChild(field);
-        field.select();
-        document.execCommand("copy");
-        field.remove();
+        setCopied(legacyCopy());
       }
-      setCopied(true);
       setTimeout(() => setCopied(false), 2200);
     } catch {
-      setCopied(false);
+      setCopied(legacyCopy());
+      setTimeout(() => setCopied(false), 2200);
     }
   };
 
@@ -484,36 +544,53 @@ function CampaignPage() {
       <main>
         <section className="campaign-hero section" id="top">
           <div className="campaign-hero-copy">
-            <p className="eyebrow">مسترکلاس زنده · ۹۰ دقیقه · فقط یک‌بار</p>
+            <p className="eyebrow">مسترکلاس زنده در Google Meet · فقط یک‌بار</p>
             <h1>در ۹۰ دقیقه یاد بگیر چطور با AI یک هفته کار را به یک روز تبدیل کنی.</h1>
-            <p>نه با معرفی پشت‌سرهم ابزارها؛ با روش فکرکردن، ورک‌فلوهای واقعی و مثال‌هایی که در کدنویسی، طراحی و بیزینس قابل استفاده‌اند.</p>
+            <p>اگه از AI استفاده می‌کنی ولی هنوز هر بار باید از صفر شروع کنی و تهش هم معلوم نیست خروجی خوب درمیاد یا نه، این جلسه دقیقاً برای همینه. قرار نیست ۹۰ دقیقه اسم ابزار حفظ کنیم؛ با هم یک کار واقعی رو از مسئله تا خروجی جلو می‌بریم.</p>
             <div className="campaign-meta">
               <span><Play size={20} weight="fill" />جمعه · ۱۱:۰۰ تا ۱۲:۳۰</span>
-              <span><MapPin size={20} weight="fill" />آنلاین و زنده</span>
+              <span><VideoCamera size={20} weight="fill" />آنلاین و زنده در Google Meet</span>
             </div>
-            <div className="campaign-price"><span>هزینه ثبت‌نام</span><strong>۲٬۹۹۰٬۰۰۰ تومان</strong><small>با کد معرفی: ۲٬۶۹۱٬۰۰۰ تومان</small></div>
+            <div className="campaign-price">
+              <span>هزینه ثبت‌نام</span>
+              <strong>۲٬۹۹۰٬۰۰۰ تومان</strong>
+              <small>با کد معرفی ۱۰٪ کمتر: ۲٬۶۹۱٬۰۰۰ تومان</small>
+              <a href="#referral">کد معرفی چطور هزینه خودم رو هم کم می‌کنه؟</a>
+            </div>
             <div className="button-row">
-              <a className="button" href="#register">درخواست ثبت‌نام<Arrow rtl /></a>
-              <a className="button button-ghost" href="#agenda">دیدن برنامه جلسه<Arrow rtl /></a>
+              <a className="button" href="#register">می‌خوام ثبت‌نام کنم<Arrow rtl /></a>
+              <a className="button button-ghost" href="#agenda">اول برنامه رو ببینم<Arrow rtl /></a>
             </div>
           </div>
-          <figure className="campaign-photo"><img src="/images/amin-headshot.webp" alt="امین سخا، مدرس مسترکلاس" /></figure>
+          <figure className="campaign-photo">
+            <img src="/images/amin-teaching.jpg" alt="امین سخا در حال تدریس" />
+            <figcaption>تجربه واقعی، توضیح ساده، مثال قابل استفاده</figcaption>
+          </figure>
         </section>
 
         <section className="campaign-proof section">
-          <div><strong>+۵ سال</strong><span>ساخت محصول واقعی</span></div>
-          <div><strong>۳ پلتفرم</strong><span>سابقه تدریس</span></div>
-          <div><strong>۹۰ دقیقه</strong><span>فشرده و کاربردی</span></div>
-          <div><strong>یک‌بار</strong><span>برگزاری زنده</span></div>
+          <article><Play size={23} weight="fill" /><div><strong>۹۰ دقیقه</strong><span>فشرده، زنده و بدون حاشیه</span></div></article>
+          <article><VideoCamera size={23} weight="fill" /><div><strong>Google Meet</strong><span>آنلاین و تعاملی</span></div></article>
+          <article><TelegramLogo size={23} weight="fill" /><div><strong>کانال اختصاصی</strong><span>نکات و محتوای تکمیلی</span></div></article>
+          <article><CalendarCheck size={23} weight="fill" /><div><strong>فقط یک‌بار</strong><span>برگزاری زنده</span></div></article>
+        </section>
+
+        <section className="student-origin section" aria-labelledby="student-origin-title">
+          <Sparkle size={31} weight="fill" aria-hidden="true" />
+          <div>
+            <p className="eyebrow">این مسترکلاس از یک درخواست واقعی شروع شد</p>
+            <h2 id="student-origin-title">دانشجوهام مدت‌ها می‌گفتن این روش کار با AI رو یک‌جا آموزش بده؛ بالاخره تصمیم گرفتم انجامش بدم.</h2>
+            <p>به درخواست دانشجوهای عزیزی که همیشه مشتاق یادگرفتن و همین‌طور همکارهایی که نتیجه کارم با AI رو از نزدیک دیده بودن، تجربه‌ای رو که هر روز واقعاً ازش استفاده می‌کنم توی یک جلسه فشرده جمع کردم؛ ساده، مستقیم و با مثال واقعی.</p>
+          </div>
         </section>
 
         <section className="campaign-section section" id="outcomes">
-          <SectionHeading kicker="خروجی جلسه" title="بعد از این ۹۰ دقیقه، ابزار بیشتر نمی‌شناسی؛ بهتر کار می‌کنی." />
+          <SectionHeading kicker="ته این جلسه چی گیرت میاد؟" title="قرار نیست فقط با چند تا ابزار جدید برگردی؛ باید روش کارت عوض بشه." intro="هدف اینه که دفعه بعد برای یک کار جدی سراغ AI رفتی، بدونی دقیقاً از کجا شروع کنی، چطور جلو بری و کجا خروجی رو زیر سؤال ببری." />
           <div className="outcome-grid">
             {[
-              ["صورت مسئله بهتر", "یاد می‌گیری مسئله را طوری به AI بدهی که خروجی قابل استفاده بگیری، نه جواب‌های عمومی."],
-              ["ورک‌فلو قابل تکرار", "از یک درخواست پراکنده به فرایندی می‌رسی که تحقیق، تولید، بازبینی و اصلاح را به هم وصل می‌کند."],
-              ["قضاوت انسانی", "می‌فهمی کجا باید به AI اعتماد نکنی و چطور کیفیت خروجی را بررسی و مسئولیتش را حفظ کنی."],
+              ["خروجی شانسی؟ نه.", "یاد می‌گیری مسئله و اطلاعات زمینه‌ای رو جوری بچینی که AI جواب عمومی و بی‌مصرف تحویلت نده."],
+              ["یک روند قابل تکرار", "تحقیق، تولید، نقد و اصلاح رو به یک ورک‌فلو وصل می‌کنی؛ روندی که برای کار بعدی هم قابل استفاده است."],
+              ["خروجی قابل اعتماد", "می‌فهمی کجا باید به AI شک کنی، چطور جوابش رو بررسی کنی و کیفیت نهایی رو دست خودت نگه داری."],
             ].map(([title, body], index) => (
               <article key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{body}</p></article>
             ))}
@@ -521,39 +598,91 @@ function CampaignPage() {
         </section>
 
         <section className="campaign-section section" id="agenda">
-          <SectionHeading kicker="برنامه مسترکلاس" title="یک مسیر مستقیم از مسئله تا خروجی واقعی." />
+          <SectionHeading kicker="قراره چه کار کنیم؟" title="اول می‌فهمیم مشکل کجاست، بعد زنده حلش می‌کنیم." intro="بخش اصلی جلسه ارائه خشک نیست؛ یک ورک‌فلو رو جلوی خودت می‌سازم تا منطق تصمیم‌ها رو هم ببینی، نه فقط نتیجه آخر رو." />
           <ol className="agenda-list">
-            <li><time>۱۰ دقیقه</time><div><strong>چرا بیشتر آدم‌ها از AI خروجی متوسط می‌گیرند؟</strong><p>مدل ذهنی درست برای استفاده از AI و اشتباه‌های رایج.</p></div></li>
-            <li><time>۵۵ دقیقه</time><div><strong>ساخت یک ورک‌فلو واقعی، زنده</strong><p>از تعریف مسئله و جمع‌آوری زمینه تا تولید، نقد و اصلاح خروجی.</p></div></li>
-            <li><time>۱۵ دقیقه</time><div><strong>تعمیم به کد، طراحی و بیزینس</strong><p>چطور همان منطق را برای حوزه‌های مختلف تنظیم کنیم.</p></div></li>
-            <li><time>۱۰ دقیقه</time><div><strong>پرسش و پاسخ</strong><p>پاسخ مستقیم به مسئله‌های واقعی شرکت‌کنندگان.</p></div></li>
+            <li><time>۱۰ دقیقه</time><div><strong>چرا بیشتر خروجی‌ها متوسط از آب درمیاد؟</strong><p>اشتباه‌های رایجی که باعث می‌شن AI فقط جواب خوشگل بده، نه جواب به‌دردبخور.</p></div></li>
+            <li><time>۵۵ دقیقه</time><div><strong>یک کار واقعی رو زنده جلو می‌بریم</strong><p>از تعریف مسئله و دادن زمینه تا ساخت خروجی، نقدکردن و اصلاحش.</p></div></li>
+            <li><time>۱۵ دقیقه</time><div><strong>همین روش برای کد، دیزاین و بیزینس</strong><p>می‌بینیم چطور منطق ثابت می‌مونه ولی ورودی و معیار بررسی برای هر حوزه عوض می‌شه.</p></div></li>
+            <li><time>۱۰ دقیقه</time><div><strong>سؤال‌های خودتون</strong><p>هر چیزی که هنوز مبهمه یا به کار خودت مربوطه رو مستقیم می‌پرسی.</p></div></li>
           </ol>
         </section>
 
+        <section className="referral-section section" id="referral">
+          <div className="referral-intro">
+            <p className="eyebrow">کد معرفی</p>
+            <span className="referral-badge"><UsersThree size={18} weight="fill" />هر دو نفر ۱۰٪ سود می‌کنن</span>
+            <h2>دوستت ارزون‌تر میاد؛ هزینه خودت هم با هر معرفی کمتر می‌شه.</h2>
+            <p>لازم نیست اول دوره رو بخری. از ادمین یک کد بگیر، برای دوستات بفرست و به‌ازای هر ثبت‌نام موفق، ۳۰۰هزار تومان اعتبار برای خودت جمع کن.</p>
+          </div>
+          <div className="referral-highlight">
+            <Gift size={32} weight="fill" />
+            <span>مثال خیلی ساده</span>
+            <strong>۱۰ معرفی موفق = ۳ میلیون تومان اعتبار</strong>
+            <p>یعنی هزینه ۲٬۹۹۰٬۰۰۰ تومانی مسترکلاس کامل پوشش داده می‌شه و عملاً رایگان شرکت می‌کنی.</p>
+          </div>
+          <div className="referral-benefits">
+            <article><UsersThree size={24} weight="fill" /><span>سود دوستت</span><strong>۱۰٪ تخفیف</strong><p>به‌جای ۲٬۹۹۰٬۰۰۰ تومان، با کد تو ۲٬۶۹۱٬۰۰۰ تومان پرداخت می‌کنه.</p></article>
+            <article><Coins size={24} weight="fill" /><span>سود خودت</span><strong>۳۰۰هزار تومان</strong><p>برای هر پرداخت تأییدشده، این مبلغ به اعتبار معرفی‌های تو اضافه می‌شه.</p></article>
+          </div>
+          <div className="referral-steps">
+            <p><strong>۱</strong>کد معرفی را از ادمین بگیر و برای دوستانت بفرست.</p>
+            <p><strong>۲</strong>دوستت موقع ثبت‌نام کد رو اعلام می‌کنه و ۱۰٪ کمتر پرداخت می‌کنه.</p>
+            <p><strong>۳</strong>به محض تأیید پرداختش، ۳۰۰هزار تومان برای تو ثبت می‌شه.</p>
+          </div>
+          <div className="referral-rules">
+            <div><p className="eyebrow">قوانین شفاف معرفی</p><h3>قبل از فرستادن کد این چند مورد رو بدون.</h3></div>
+            <ul>
+              <li><Check size={18} weight="bold" />گرفتن کد رایگانه و حتی قبل از ثبت‌نام خودت هم می‌تونی کد داشته باشی.</li>
+              <li><Check size={18} weight="bold" />کد باید قبل از پرداختِ دوستت به ادمین اعلام بشه؛ بعد از پرداخت قابل اضافه‌کردن نیست.</li>
+              <li><Check size={18} weight="bold" />هر نفر فقط می‌تونه از یک کد استفاده کنه و معرفی خودت با کد خودت حساب نمی‌شه.</li>
+              <li><Check size={18} weight="bold" />معرفی موفق یعنی پرداخت دوستت توسط ادمین تأیید شده باشه.</li>
+              <li><Check size={18} weight="bold" />اعتبارها تا پوشش کامل هزینه ثبت‌نامت جمع می‌شن؛ اگر قبلاً پرداخت کردی، تسویه از طریق ادمین هماهنگ می‌شه.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section className="campaign-section experience-section section" id="experience">
+          <SectionHeading kicker="این تجربه از کجا اومده؟" title="از بیشتر از ۵ سال کار روی محصول واقعی؛ نه فقط بازی‌کردن با چند تا ابزار AI." intro="من چیزهایی رو می‌گم که وسط پروژه، کلاس، ددلاین و تصمیم واقعی به کارم اومدن. این هم خلاصه مسیریه که پشت این مسترکلاس قرار داره." />
+          <div className="experience-grid">
+            {experience.map((item) => (
+              <article className="experience-card" key={item.company}>
+                <header><div><span>{item.company}</span><h3>{item.role}</h3></div><time>{item.period}</time></header>
+                <p>{item.body}</p>
+                <div className="experience-tags">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+              </article>
+            ))}
+          </div>
+          <div className="teaching-proof">
+            <ChalkboardTeacher size={34} weight="fill" />
+            <div><span>در کنارش، سال‌هاست تدریس می‌کنم</span><strong>مکتب‌خونه · سکان آکادمی · مجتمع فنی</strong><p>پس فقط انجام‌دادن کار مهم نیست؛ بلدم منطق پشتش رو ساده، مرتب و قابل استفاده توضیح بدم.</p></div>
+          </div>
+        </section>
+
         <section className="campaign-section section audience-section">
-          <SectionHeading kicker="این جلسه برای کیه؟" title="برای کسی که کار دانشی انجام می‌دهد و خروجی واقعی می‌خواهد." />
+          <SectionHeading kicker="این جلسه به درد چه کسی می‌خوره؟" title="اگر کار فکری انجام می‌دی و از AI خروجی واقعی می‌خوای، احتمالاً جای درستی اومدی." intro="لازم نیست برنامه‌نویس باشی یا از قبل صد تا ابزار بلد باشی؛ مهم اینه که یک کار واقعی داشته باشی که می‌خوای بهتر و سریع‌تر انجامش بدی." />
           <div className="audience-grid">
             {["برنامه‌نویس و مهندس", "طراح و تولیدکننده محتوا", "مدیر، فریلنسر و صاحب کسب‌وکار", "دانشجو و مدرس"].map((item) => <span key={item}><Check size={19} weight="bold" />{item}</span>)}
           </div>
         </section>
 
-        <section className="referral-section section">
-          <div><p className="eyebrow">کد معرفی</p><h2>با معرفی درست، همه سود می‌کنند.</h2></div>
-          <div className="referral-steps">
-            <p><strong>۱</strong>کد معرفی را از ادمین بگیر و برای دوستانت بفرست.</p>
-            <p><strong>۲</strong>دوستت با همان کد ۱۰٪ کمتر پرداخت می‌کند.</p>
-            <p><strong>۳</strong>بعد از تأیید پرداخت او، ۳۰۰هزار تومان برای تو ثبت می‌شود.</p>
+        <section className="campaign-section section logistics-section">
+          <SectionHeading kicker="بعد از ثبت‌نام چی می‌شه؟" title="همه‌چیز از تلگرام هماهنگ می‌شه؛ جلسه هم روی Google Meet برگزار می‌شه." />
+          <div className="logistics-grid">
+            <article><span>۱</span><ChatCircleText size={27} weight="fill" /><h3>به ادمین پیام می‌دی</h3><p>نامت و کد معرفی رو می‌فرستی، اطلاعات کارت‌به‌کارت رو می‌گیری و پرداختت تأیید می‌شه.</p></article>
+            <article><span>۲</span><TelegramLogo size={27} weight="fill" /><h3>وارد کانال اختصاصی می‌شی</h3><p>اطلاعیه‌ها، نکات آماده‌سازی و محتوای تکمیلی مسترکلاس داخل همین کانال برات ارسال می‌شه.</p></article>
+            <article><span>۳</span><VideoCamera size={27} weight="fill" /><h3>لینک Google Meet رو می‌گیری</h3><p>لینک جلسه داخل کانال قرار می‌گیره و جمعه از ساعت ۱۱ تا ۱۲:۳۰ به‌صورت زنده کنار هم هستیم.</p></article>
           </div>
         </section>
 
         <section className="register-section section" id="register">
           <div>
             <p className="eyebrow">ثبت‌نام</p>
-            <h2>اگر می‌خواهی AI واقعاً روش کارت را تغییر دهد، این ۹۰ دقیقه برای توست.</h2>
-            <p>پرداخت به‌صورت کارت‌به‌کارت و ثبت‌نام از طریق ادمین انجام می‌شود. اگر کد معرفی داری، قبل از پرداخت در پیام بنویس.</p>
+            <h2>اگه می‌خوای این بار AI از یک ابزار جذاب تبدیل بشه به بخشی از روش کارت، از تلگرام پیام بده.</h2>
+            <p>ثبت‌نام با کارت‌به‌کارت انجام می‌شه. اگه کد معرفی داری، همون اول داخل پیامت بنویس تا تخفیف ۱۰٪ برات حساب بشه.</p>
+            <div className="register-note"><SealCheck size={20} weight="fill" />بعد از تأیید پرداخت، مستقیم وارد کانال اختصاصی شرکت‌کننده‌ها می‌شی.</div>
           </div>
           <div className="register-actions">
-            <a className="button button-light" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={20} weight="fill" />پیام در تلگرام</a>
+            <a className="button button-light" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={20} weight="fill" />پیام به @amin3379</a>
             <button className="button button-ghost" type="button" onClick={copyMessage}>{copied ? "متن کپی شد" : "کپی متن ثبت‌نام"}</button>
           </div>
         </section>

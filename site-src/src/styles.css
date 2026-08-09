@@ -129,23 +129,31 @@ img { display: block; max-width: 100%; }
 .social-links a, .back-top { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
 .social-links a:hover, .back-top:hover { color: var(--text); }
 
-.campaign-hero { min-height: 690px; display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; align-items: center; padding-block: 64px; }
-.campaign-hero h1 { margin: 0; max-width: 800px; font-size: clamp(48px, 5.5vw, 78px); line-height: 1.1; letter-spacing: -.055em; }
+.campaign-hero { min-height: 690px; display: grid; grid-template-columns: 1.08fr .92fr; gap: 64px; align-items: center; padding-block: 64px; }
+.campaign-hero h1 { margin: 0; max-width: 800px; font-size: clamp(46px, 5.2vw, 74px); line-height: 1.1; letter-spacing: -.055em; }
 .campaign-hero-copy > p:not(.eyebrow) { max-width: 760px; color: var(--muted); font-size: 19px; line-height: 1.9; }
-.campaign-photo { margin: 0; height: 590px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
-.campaign-photo img { width: 100%; height: 100%; object-fit: cover; }
+.campaign-photo { margin: 0; width: min(100%, 540px); aspect-ratio: 1; justify-self: end; border: 1px solid #42516a; border-radius: 16px; overflow: hidden; background: var(--surface); }
+.campaign-photo img { width: 100%; height: calc(100% - 58px); object-fit: cover; object-position: center; }
+.campaign-photo figcaption { min-height: 58px; padding: 0 20px; display: flex; align-items: center; color: #dbe3ef; background: #0d192a; font-size: 14px; font-weight: 700; }
 .campaign-meta { margin: 26px 0; display: flex; flex-wrap: wrap; gap: 14px 24px; color: #d8dfeb; }
 .campaign-meta span { display: inline-flex; align-items: center; gap: 8px; }
 .campaign-meta svg { color: #6e98ff; }
 .campaign-price { margin: 28px 0 30px; padding-inline-start: 20px; border-inline-start: 3px solid var(--yellow); display: grid; gap: 5px; }
 .campaign-price span, .campaign-price small { color: var(--muted); }
 .campaign-price strong { font-size: 30px; }
+.campaign-price a { width: max-content; max-width: 100%; margin-top: 7px; color: #ffd567; font-size: 13px; font-weight: 800; }
 .campaign-proof { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid var(--line); }
-.campaign-proof div { padding: 32px; }
-.campaign-proof div + div { border-inline-start: 1px solid var(--line); }
+.campaign-proof article { min-height: 132px; padding: 28px; display: flex; align-items: center; gap: 16px; }
+.campaign-proof article + article { border-inline-start: 1px solid var(--line); }
+.campaign-proof article > svg { flex: 0 0 auto; color: #7198ff; }
 .campaign-proof strong, .campaign-proof span { display: block; }
-.campaign-proof strong { font-size: 28px; }
-.campaign-proof span { margin-top: 8px; color: var(--muted); }
+.campaign-proof strong { font-size: 21px; }
+.campaign-proof span { margin-top: 7px; color: var(--muted); font-size: 13px; }
+.student-origin { margin-top: 74px; padding: 32px 36px; display: grid; grid-template-columns: 44px 1fr; gap: 24px; align-items: start; border: 1px solid #31466a; border-radius: 14px; background: #0b1829; }
+.student-origin > svg { margin-top: 4px; color: #7a9fff; }
+.student-origin .eyebrow { margin-bottom: 12px; }
+.student-origin h2 { margin: 0; max-width: 970px; font-size: clamp(27px, 3vw, 41px); line-height: 1.35; letter-spacing: -.035em; }
+.student-origin > div > p:last-child { margin: 16px 0 0; max-width: 930px; color: var(--muted); font-size: 16px; line-height: 1.9; }
 .campaign-section { padding-block: 108px; border-bottom: 1px solid var(--line); }
 .outcome-grid { margin-top: 54px; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 14px; }
 .outcome-grid article { min-height: 280px; padding: 34px; }
@@ -161,15 +169,58 @@ img { display: block; max-width: 100%; }
 .audience-grid { margin-top: 50px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .audience-grid span { min-height: 70px; padding: 20px 24px; display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
 .audience-grid svg { color: #6992ff; }
-.referral-section { margin-block: 108px; padding-block: 54px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 70px; border-block: 1px solid #705b20; }
+.referral-section { margin-block: 108px; padding: 58px; display: grid; grid-template-columns: 1.08fr .92fr; gap: 24px 34px; border: 1px solid #826d2d; border-radius: 18px; background: #14180f; }
 .referral-section .eyebrow { color: var(--yellow); }
-.referral-section h2 { margin: 0; font-size: 45px; line-height: 1.08; letter-spacing: -.04em; }
-.referral-steps { display: grid; gap: 16px; }
-.referral-steps p { margin: 0; display: grid; grid-template-columns: 38px 1fr; align-items: center; color: var(--muted); }
-.referral-steps strong { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid #715c23; border-radius: 50%; color: #ffd36a; }
+.referral-section h2 { margin: 18px 0; font-size: clamp(38px, 4vw, 56px); line-height: 1.16; letter-spacing: -.04em; }
+.referral-intro > p:last-child { margin: 0; max-width: 700px; color: #bbc3cf; font-size: 17px; line-height: 1.85; }
+.referral-badge { width: max-content; max-width: 100%; padding: 9px 13px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #806927; border-radius: 999px; color: #ffdc78; background: #1f2115; font-size: 13px; font-weight: 800; }
+.referral-highlight { padding: 30px; display: flex; flex-direction: column; justify-content: center; border: 1px solid #947a2b; border-radius: 14px; background: #222416; }
+.referral-highlight > svg { color: #ffd968; }
+.referral-highlight > span { margin-top: 24px; color: #c8b365; font-size: 13px; font-weight: 800; }
+.referral-highlight strong { margin-top: 8px; color: #fff4cd; font-size: 29px; line-height: 1.35; }
+.referral-highlight p { margin: 12px 0 0; color: #c6c8bd; line-height: 1.8; }
+.referral-benefits { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 10px; }
+.referral-benefits article { padding: 26px; border: 1px solid #5e552f; border-radius: 12px; background: #1a1d14; }
+.referral-benefits svg { color: #ffd464; }
+.referral-benefits span, .referral-benefits strong { display: block; }
+.referral-benefits span { margin-top: 18px; color: #bcbda9; font-size: 13px; }
+.referral-benefits strong { margin-top: 5px; color: #fff2c2; font-size: 27px; }
+.referral-benefits p { margin: 10px 0 0; color: #aeb2a6; line-height: 1.75; }
+.referral-steps { grid-column: 1 / -1; margin-top: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.referral-steps p { min-height: 112px; margin: 0; padding: 22px; display: grid; grid-template-columns: 38px 1fr; gap: 10px; align-items: center; color: #c4c7be; border: 1px solid #514b30; border-radius: 10px; }
+.referral-steps strong { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid #806a27; border-radius: 50%; color: #ffd36a; }
+.referral-rules { grid-column: 1 / -1; margin-top: 20px; padding-top: 34px; display: grid; grid-template-columns: .72fr 1.28fr; gap: 38px; border-top: 1px solid #5b512d; }
+.referral-rules h3 { margin: 0; font-size: 27px; line-height: 1.4; }
+.referral-rules ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.referral-rules li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; color: #bfc3ba; line-height: 1.75; }
+.referral-rules li svg { margin-top: 4px; color: #ffd464; }
+.experience-section { margin-block: 108px; padding-inline: 52px; border: 1px solid #263a57; border-radius: 18px; background: #091625; }
+.experience-grid { margin-top: 54px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.experience-card { min-height: 285px; padding: 28px; border: 1px solid #273a54; border-radius: 12px; background: #0b192a; }
+.experience-card header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+.experience-card header span { color: #7fa1ff; font-size: 13px; font-weight: 800; }
+.experience-card h3 { margin: 7px 0 0; font-size: 24px; }
+.experience-card time { color: #909bad; font-size: 13px; white-space: nowrap; }
+.experience-card > p { color: #aab4c2; line-height: 1.85; }
+.experience-tags { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+.experience-tags span { padding: 7px 10px; border: 1px solid #35465f; border-radius: 999px; color: #bdc9da; font-size: 12px; }
+.teaching-proof { margin-top: 18px; padding: 28px; display: grid; grid-template-columns: 52px 1fr; gap: 18px; align-items: center; border: 1px solid #4b4430; border-radius: 12px; background: #171a18; }
+.teaching-proof > svg { color: #ffd262; }
+.teaching-proof span, .teaching-proof strong { display: block; }
+.teaching-proof span { color: #c6b872; font-size: 13px; }
+.teaching-proof strong { margin-top: 6px; font-size: 22px; }
+.teaching-proof p { margin: 8px 0 0; color: #aeb4bd; }
+.logistics-grid { margin-top: 52px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.logistics-grid article { min-height: 260px; padding: 28px; position: relative; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.logistics-grid article > span { position: absolute; inset-block-start: 22px; inset-inline-end: 24px; color: #6d7a8e; font-size: 13px; font-weight: 800; }
+.logistics-grid svg { color: #7198ff; }
+.logistics-grid h3 { margin: 42px 0 12px; font-size: 23px; }
+.logistics-grid p { margin: 0; color: var(--muted); line-height: 1.8; }
 .register-section { margin-bottom: 90px; padding: 58px; display: grid; grid-template-columns: 1.2fr .8fr; gap: 70px; align-items: center; border: 1px solid #3768dc; border-radius: 16px; background: #0d1a30; }
 .register-section h2 { margin: 0; font-size: 42px; line-height: 1.15; letter-spacing: -.04em; }
 .register-section p:not(.eyebrow) { color: var(--muted); line-height: 1.8; }
+.register-note { margin-top: 20px; display: flex; align-items: center; gap: 10px; color: #c9d6ec; }
+.register-note svg { flex: 0 0 auto; color: #6f98ff; }
 .register-actions { display: grid; gap: 14px; }
 
 [dir="rtl"] body { font-family: "Vazirmatn Variable", Tahoma, Arial, sans-serif; }
@@ -209,9 +260,11 @@ img { display: block; max-width: 100%; }
   .about-photo { height: 520px; }
   .footer { grid-template-columns: 1fr; align-items: start; }
   .campaign-proof { grid-template-columns: repeat(2, 1fr); }
-  .campaign-proof div:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
-  .campaign-proof div:nth-child(4) { border-top: 1px solid var(--line); }
+  .campaign-proof article:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
+  .campaign-proof article:nth-child(4) { border-top: 1px solid var(--line); }
   .referral-section, .register-section { grid-template-columns: 1fr; }
+  .referral-steps, .referral-rules, .experience-grid, .logistics-grid { grid-template-columns: 1fr; }
+  .experience-section { padding-inline: 30px; }
 }
 
 @media (max-width: 560px) {
@@ -244,11 +297,19 @@ img { display: block; max-width: 100%; }
   .social-links { flex-wrap: wrap; }
   .campaign-hero { min-height: auto; padding-block: 30px 54px; }
   .campaign-proof { grid-template-columns: 1fr; }
-  .campaign-proof div + div, .campaign-proof div:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
+  .campaign-proof article + article, .campaign-proof article:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
+  .student-origin { margin-top: 48px; padding: 26px 22px; grid-template-columns: 1fr; }
   .audience-grid { grid-template-columns: 1fr; }
   .agenda-list li { grid-template-columns: 1fr; gap: 12px; padding-block: 24px; }
-  .referral-section { margin-block: 70px; gap: 36px; }
+  .referral-section { margin-block: 70px; padding: 28px 20px; gap: 28px; }
+  .referral-benefits { grid-template-columns: 1fr; }
+  .referral-rules { gap: 24px; }
   .referral-section h2, .register-section h2 { font-size: 34px; }
+  .referral-highlight strong { font-size: 25px; }
+  .experience-section { margin-block: 70px; padding-inline: 20px; }
+  .experience-card { padding: 22px; }
+  .experience-card header { flex-direction: column; gap: 10px; }
+  .teaching-proof { grid-template-columns: 1fr; }
   .register-section { padding: 30px 22px; margin-bottom: 50px; }
 }
 
