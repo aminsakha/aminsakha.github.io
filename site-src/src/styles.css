@@ -149,12 +149,32 @@ img { display: block; max-width: 100%; }
 .campaign-proof strong, .campaign-proof span { display: block; }
 .campaign-proof strong { font-size: 21px; }
 .campaign-proof span { margin-top: 7px; color: var(--muted); font-size: 13px; }
-.student-origin { margin-top: 74px; padding: 32px 36px; display: grid; grid-template-columns: 44px 1fr; gap: 24px; align-items: start; border: 1px solid #31466a; border-radius: 14px; background: #0b1829; }
-.student-origin > svg { margin-top: 4px; color: #7a9fff; }
-.student-origin .eyebrow { margin-bottom: 12px; }
-.student-origin h2 { margin: 0; max-width: 970px; font-size: clamp(27px, 3vw, 41px); line-height: 1.35; letter-spacing: -.035em; }
-.student-origin > div > p:last-child { margin: 16px 0 0; max-width: 930px; color: var(--muted); font-size: 16px; line-height: 1.9; }
+.instructor-intro { margin-top: 74px; padding: 40px; display: grid; grid-template-columns: minmax(250px, .72fr) minmax(0, 1.28fr); gap: 48px; align-items: stretch; border: 1px solid #31466a; border-radius: 18px; background: #0b1829; }
+.instructor-intro figure { min-height: 510px; margin: 0; overflow: hidden; border-radius: 13px; background: #111e30; }
+.instructor-intro figure img { width: 100%; height: 100%; object-fit: cover; object-position: center 38%; }
+.instructor-copy { align-self: center; }
+.instructor-copy .eyebrow { margin-bottom: 14px; }
+.instructor-copy h2 { margin: 0; max-width: 790px; font-size: clamp(34px, 4vw, 54px); line-height: 1.3; letter-spacing: -.035em; }
+.instructor-copy > p:not(.eyebrow) { margin: 20px 0 0; max-width: 820px; color: var(--muted); font-size: 17px; line-height: 1.95; }
+.student-origin-note { margin-top: 26px; padding: 20px 22px; display: grid; grid-template-columns: 30px 1fr; gap: 14px; align-items: start; border: 1px solid #405b87; border-radius: 11px; background: #101f34; }
+.student-origin-note svg { margin-top: 3px; color: #82a4ff; }
+.student-origin-note p { margin: 0; color: #c5cfde; line-height: 1.85; }
+.student-origin-note strong { color: #fff; }
+.instructor-facts { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.instructor-facts span { min-height: 98px; padding: 16px; display: flex; flex-direction: column; justify-content: center; border: 1px solid #2d405d; border-radius: 10px; color: #aab5c5; font-size: 12px; line-height: 1.6; background: #091625; }
+.instructor-facts strong { display: block; margin-bottom: 4px; color: #f3f6fb; font-size: 20px; }
 .campaign-section { padding-block: 108px; border-bottom: 1px solid var(--line); }
+.teaching-spotlight { padding-top: 96px; }
+.teaching-card-grid { margin-top: 54px; display: grid; grid-template-columns: 1.18fr .91fr .91fr; gap: 16px; }
+.teaching-card { min-height: 410px; padding: 30px; display: flex; flex-direction: column; border: 1px solid #2a3c56; border-radius: 14px; background: #0a1727; transition: border-color 160ms ease, transform 160ms ease; }
+.teaching-card:hover { border-color: #4e6d9d; transform: translateY(-2px); }
+.teaching-card-featured { border-color: #4268a9; background: linear-gradient(150deg, #10213b 0%, #0a1727 70%); }
+.teaching-card-icon { width: 52px; height: 52px; display: grid; place-items: center; border: 1px solid #3e5d8b; border-radius: 11px; color: #85a6ff; background: #101f34; }
+.teaching-card > span { margin-top: 28px; color: #7fa2ff; font-size: 13px; font-weight: 850; }
+.teaching-card h3 { margin: 10px 0 0; font-size: 27px; line-height: 1.4; }
+.teaching-card p { margin: 14px 0 0; color: var(--muted); line-height: 1.85; }
+.teaching-card > strong { margin-top: 22px; color: #dfe7f4; font-size: 14px; }
+.teaching-card a { margin-top: auto; padding-top: 26px; display: inline-flex; align-items: center; gap: 9px; color: #83a5ff; font-weight: 800; font-size: 14px; }
 .outcome-grid { margin-top: 54px; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 14px; }
 .outcome-grid article { min-height: 280px; padding: 34px; }
 .outcome-grid article + article { border-inline-start: 1px solid var(--line); }
@@ -194,22 +214,23 @@ img { display: block; max-width: 100%; }
 .referral-rules ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
 .referral-rules li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; color: #bfc3ba; line-height: 1.75; }
 .referral-rules li svg { margin-top: 4px; color: #ffd464; }
+.testimonials-section { padding-top: 96px; }
+.testimonial-grid { margin-top: 54px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+.testimonial-placeholder { min-height: 270px; padding: 26px; display: flex; flex-direction: column; grid-column: span 2; border: 1px dashed #3b4a60; border-radius: 13px; background: #091522; }
+.testimonial-placeholder:nth-child(4), .testimonial-placeholder:nth-child(5) { grid-column: span 3; }
+.testimonial-placeholder blockquote { margin: 0; color: #9ca8ba; font-size: 15px; line-height: 1.9; }
+.testimonial-placeholder footer { margin-top: auto; padding-top: 26px; display: flex; align-items: center; gap: 12px; border-top: 1px solid #1d2b3e; }
+.testimonial-placeholder footer > svg { flex: 0 0 auto; color: #62748e; }
+.testimonial-placeholder footer strong, .testimonial-placeholder footer span { display: block; }
+.testimonial-placeholder footer strong { color: #cbd3df; font-size: 14px; }
+.testimonial-placeholder footer span { margin-top: 4px; color: #78869a; font-size: 12px; }
 .experience-section { margin-block: 108px; padding-inline: 52px; border: 1px solid #263a57; border-radius: 18px; background: #091625; }
-.experience-grid { margin-top: 54px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.experience-card { min-height: 285px; padding: 28px; border: 1px solid #273a54; border-radius: 12px; background: #0b192a; }
+.experience-grid { margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.experience-card { min-height: 140px; padding: 22px; border: 1px solid #273a54; border-radius: 12px; background: #0b192a; }
 .experience-card header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
 .experience-card header span { color: #7fa1ff; font-size: 13px; font-weight: 800; }
-.experience-card h3 { margin: 7px 0 0; font-size: 24px; }
+.experience-card h3 { margin: 7px 0 0; font-size: 18px; line-height: 1.5; }
 .experience-card time { color: #909bad; font-size: 13px; white-space: nowrap; }
-.experience-card > p { color: #aab4c2; line-height: 1.85; }
-.experience-tags { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; }
-.experience-tags span { padding: 7px 10px; border: 1px solid #35465f; border-radius: 999px; color: #bdc9da; font-size: 12px; }
-.teaching-proof { margin-top: 18px; padding: 28px; display: grid; grid-template-columns: 52px 1fr; gap: 18px; align-items: center; border: 1px solid #4b4430; border-radius: 12px; background: #171a18; }
-.teaching-proof > svg { color: #ffd262; }
-.teaching-proof span, .teaching-proof strong { display: block; }
-.teaching-proof span { color: #c6b872; font-size: 13px; }
-.teaching-proof strong { margin-top: 6px; font-size: 22px; }
-.teaching-proof p { margin: 8px 0 0; color: #aeb4bd; }
 .logistics-grid { margin-top: 52px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .logistics-grid article { min-height: 260px; padding: 28px; position: relative; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .logistics-grid article > span { position: absolute; inset-block-start: 22px; inset-inline-end: 24px; color: #6d7a8e; font-size: 13px; font-weight: 800; }
@@ -262,8 +283,14 @@ img { display: block; max-width: 100%; }
   .campaign-proof { grid-template-columns: repeat(2, 1fr); }
   .campaign-proof article:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
   .campaign-proof article:nth-child(4) { border-top: 1px solid var(--line); }
+  .instructor-intro { grid-template-columns: 1fr; }
+  .instructor-intro figure { min-height: auto; aspect-ratio: 1.25; }
+  .teaching-card-grid { grid-template-columns: 1fr; }
+  .teaching-card { min-height: 350px; }
   .referral-section, .register-section { grid-template-columns: 1fr; }
   .referral-steps, .referral-rules, .experience-grid, .logistics-grid { grid-template-columns: 1fr; }
+  .testimonial-grid { grid-template-columns: 1fr; }
+  .testimonial-placeholder, .testimonial-placeholder:nth-child(4), .testimonial-placeholder:nth-child(5) { grid-column: 1; }
   .experience-section { padding-inline: 30px; }
 }
 
@@ -298,7 +325,15 @@ img { display: block; max-width: 100%; }
   .campaign-hero { min-height: auto; padding-block: 30px 54px; }
   .campaign-proof { grid-template-columns: 1fr; }
   .campaign-proof article + article, .campaign-proof article:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
-  .student-origin { margin-top: 48px; padding: 26px 22px; grid-template-columns: 1fr; }
+  .instructor-intro { margin-top: 48px; padding: 20px; gap: 28px; }
+  .instructor-intro figure { aspect-ratio: 1; }
+  .instructor-copy h2 { font-size: 34px; }
+  .instructor-copy > p:not(.eyebrow) { font-size: 15px; }
+  .student-origin-note { grid-template-columns: 1fr; }
+  .instructor-facts { grid-template-columns: 1fr; }
+  .instructor-facts span { min-height: 82px; }
+  .teaching-card { min-height: 0; padding: 24px; }
+  .teaching-card h3 { font-size: 24px; }
   .audience-grid { grid-template-columns: 1fr; }
   .agenda-list li { grid-template-columns: 1fr; gap: 12px; padding-block: 24px; }
   .referral-section { margin-block: 70px; padding: 28px 20px; gap: 28px; }
@@ -307,9 +342,9 @@ img { display: block; max-width: 100%; }
   .referral-section h2, .register-section h2 { font-size: 34px; }
   .referral-highlight strong { font-size: 25px; }
   .experience-section { margin-block: 70px; padding-inline: 20px; }
-  .experience-card { padding: 22px; }
+  .experience-card { min-height: 0; padding: 22px; }
   .experience-card header { flex-direction: column; gap: 10px; }
-  .teaching-proof { grid-template-columns: 1fr; }
+  .testimonial-placeholder { min-height: 250px; padding: 22px; }
   .register-section { padding: 30px 22px; margin-bottom: 50px; }
 }
 

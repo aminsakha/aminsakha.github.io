@@ -7,7 +7,6 @@ import {
   BracketsCurly,
   Briefcase,
   CalendarCheck,
-  ChalkboardTeacher,
   ChatCircleText,
   Check,
   Code,
@@ -24,6 +23,7 @@ import {
   SealCheck,
   Sparkle,
   TelegramLogo,
+  UserCircle,
   UsersThree,
   VideoCamera,
   X,
@@ -461,43 +461,58 @@ function CampaignPage() {
       company: "Dotin · Kidzy",
       role: "Senior Android Engineer",
       period: "۱۴۰۴ تا امروز",
-      body: "روی Parande و Vidzy کار می‌کنم؛ محصولاتی با بیش از ۷۰۰هزار مخاطب. تمرکزم روی پرفورمنس، پایداری، معماری ماژولار، Compose و Media3 است.",
-      tags: ["+۷۰۰هزار مخاطب", "پرفورمنس", "Media3"],
     },
     {
       company: "Didimoon",
       role: "Lead Mobile Developer",
       period: "۱۴۰۳ تا ۱۴۰۴",
-      body: "تجربه‌های VOD و UGC را با Compose، Media3 و FFmpeg توسعه دادم و روی CI/CD و پایه‌های KMM هم کار کردم.",
-      tags: ["VOD", "Compose", "FFmpeg"],
     },
     {
       company: "Finto",
       role: "Android Developer",
       period: "۱۴۰۳",
-      body: "بخش‌هایی از یک اپ قدیمی Java را به Kotlin و Compose Multiplatform منتقل کردم و درگیر Bluetooth، دوربین و سرویس‌های پس‌زمینه بودم.",
-      tags: ["Kotlin", "CMP", "سخت‌افزار"],
     },
     {
       company: "MetroYar",
       role: "Founder & Android Engineer",
       period: "۱۴۰۲ تا امروز",
-      body: "یک محصول آفلاین را از ایده و معماری تا انتشار، رشد و پشتیبانی جلو بردم؛ با بیش از ۵۰هزار کاربر در مارکت‌ها.",
-      tags: ["+۵۰هزار کاربر", "Offline-first", "مالکیت محصول"],
     },
     {
       company: "Danesh Rayan",
       role: "Android Developer",
       period: "۱۴۰۱ تا ۱۴۰۲",
-      body: "یک کلاینت سازمانی BPMS را از Java و XML به Kotlin و Compose نزدیک کردم و کنار توسعه، منتورینگ اعضای جوان‌تر تیم را هم داشتم.",
-      tags: ["Enterprise", "Compose", "Mentoring"],
     },
     {
       company: "پارک علم و فناوری شهید بهشتی",
       role: "Android Developer",
       period: "۱۳۹۹ تا ۱۴۰۱",
-      body: "روی محصولات دسترس‌پذیری، OCR، عصای هوشمند و اپ‌های متصل به سخت‌افزار کار کردم؛ جایی که خطا واقعاً هزینه داشت.",
-      tags: ["Accessibility", "OCR", "Hardware"],
+    },
+  ];
+
+  const teaching = [
+    {
+      platform: "مکتب‌خونه",
+      title: "آموزش اندروید از پایه تا پیشرفته",
+      body: "یک دوره جامع و پروژه‌محور؛ از Kotlin تا ساخت اپلیکیشن واقعی. نزدیک ۹۰۰ دانشجو و امتیاز ۴٫۶ از ۵.",
+      fact: "۶۵ ساعت آموزش · نزدیک ۹۰۰ دانشجو",
+      href: "https://maktabkhooneh.org/course/%D8%A2%D9%85%D9%88%D8%B2%D8%B4-%D8%A7%D9%86%D8%AF%D8%B1%D9%88%DB%8C%D8%AF-%D9%BE%D8%A7%DB%8C%D9%87-%D9%BE%DB%8C%D8%B4%D8%B1%D9%81%D8%AA%D9%87-mk2113/",
+      cta: "دیدن دوره در مکتب‌خونه",
+    },
+    {
+      platform: "سکان آکادمی",
+      title: "دوره آموزش زبان برنامه‌نویسی Kotlin",
+      body: "آموزش قدم‌به‌قدم زبانی که پایه توسعه مدرن اندرویده؛ با تمرکز روی فهمیدن منطق، نه حفظ‌کردن سینتکس.",
+      fact: "آموزش ویدیویی Kotlin",
+      href: "https://sokanac.ir/ktQ",
+      cta: "دیدن دوره در سکان",
+    },
+    {
+      platform: "مجتمع فنی تهران",
+      title: "مدرس Kotlin، Android و Jetpack Compose",
+      body: "تجربه تدریس حضوری و آنلاین در شعب ونک و نارمک؛ جایی که سؤال‌های واقعی دانشجوها بخشی از خود کلاس بوده.",
+      fact: "تدریس در شعب ونک و نارمک",
+      href: "https://mftplus.com/",
+      cta: "دیدن مجتمع فنی تهران",
     },
   ];
 
@@ -505,7 +520,7 @@ function CampaignPage() {
     document.documentElement.lang = "fa";
     document.documentElement.dir = "rtl";
     document.title = "مسترکلاس ۹۰ دقیقه‌ای هوش مصنوعی کاربردی — امین سخا";
-    document.querySelector('meta[name="description"]')?.setAttribute("content", "مسترکلاس زنده امین سخا در Google Meet؛ در ۹۰ دقیقه یاد بگیر چطور با AI یک هفته کار را به یک روز تبدیل کنی، با مثال واقعی و ورک‌فلو قابل تکرار.");
+    document.querySelector('meta[name="description"]')?.setAttribute("content", "مسترکلاس زنده امین سخا در Google Meet؛ آشنایی با ابزارهای به‌روز AI، روش درست دستور دادن و ساخت خروجی حرفه‌ای با مثال واقعی در ۹۰ دقیقه.");
   }, []);
 
   const copyMessage = async () => {
@@ -575,22 +590,49 @@ function CampaignPage() {
           <article><CalendarCheck size={23} weight="fill" /><div><strong>فقط یک‌بار</strong><span>برگزاری زنده</span></div></article>
         </section>
 
-        <section className="student-origin section" aria-labelledby="student-origin-title">
-          <Sparkle size={31} weight="fill" aria-hidden="true" />
-          <div>
-            <p className="eyebrow">این مسترکلاس از یک درخواست واقعی شروع شد</p>
-            <h2 id="student-origin-title">دانشجوهام مدت‌ها می‌گفتن این روش کار با AI رو یک‌جا آموزش بده؛ بالاخره تصمیم گرفتم انجامش بدم.</h2>
-            <p>به درخواست دانشجوهای عزیزی که همیشه مشتاق یادگرفتن و همین‌طور همکارهایی که نتیجه کارم با AI رو از نزدیک دیده بودن، تجربه‌ای رو که هر روز واقعاً ازش استفاده می‌کنم توی یک جلسه فشرده جمع کردم؛ ساده، مستقیم و با مثال واقعی.</p>
+        <section className="instructor-intro section" aria-labelledby="instructor-title">
+          <figure>
+            <img src="/images/amin-headshot.webp" alt="امین سخا، مهندس اندروید و مدرس" />
+          </figure>
+          <div className="instructor-copy">
+            <p className="eyebrow">قبل از هر چیزی، من کی‌ام؟</p>
+            <h2 id="instructor-title">من امین سخا هستم؛ مهندس اندروید و مدرسی که AI بخشی از کار هرروزشه.</h2>
+            <p>بیشتر از ۵ ساله روی محصول واقعی کار می‌کنم؛ از اپ‌های رسانه‌ای با صدها هزار مخاطب تا محصول شخصی خودم، MetroYar. در کنارش Android، Kotlin و Jetpack Compose رو در مکتب‌خونه، سکان آکادمی و مجتمع فنی تهران تدریس کردم.</p>
+            <div className="student-origin-note">
+              <Sparkle size={24} weight="fill" aria-hidden="true" />
+              <p><strong>این مسترکلاس از یک درخواست واقعی شروع شد.</strong> دانشجوها و همکارهایی که روش کارم با AI رو دیده بودن، مدت‌ها می‌گفتن این تجربه رو یک‌جا و کاربردی آموزش بده؛ بالاخره تصمیم گرفتم انجامش بدم.</p>
+            </div>
+            <div className="instructor-facts" aria-label="خلاصه سابقه آموزشی امین سخا">
+              <span><strong>۶۵ ساعت</strong>آموزش منتشرشده</span>
+              <span><strong>نزدیک ۹۰۰ نفر</strong>دانشجوی دوره اندروید</span>
+              <span><strong>۴٫۶ از ۵</strong>امتیاز در مکتب‌خونه</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="campaign-section teaching-spotlight section" id="teaching">
+          <SectionHeading kicker="سابقه تدریس" title="قبل از این مسترکلاس هم سال‌هاست آموزش می‌دم؛ می‌تونی نمونه‌هاش رو خودت ببینی." intro="اعتبار این جلسه فقط به سابقه کار با AI نیست. تجربه آموزش به من یاد داده موضوع پیچیده رو چطور ساده، مرحله‌به‌مرحله و قابل استفاده توضیح بدم." />
+          <div className="teaching-card-grid">
+            {teaching.map((item, index) => (
+              <article className={index === 0 ? "teaching-card teaching-card-featured" : "teaching-card"} key={item.platform}>
+                <div className="teaching-card-icon"><GraduationCap size={30} weight="fill" /></div>
+                <span>{item.platform}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+                <strong>{item.fact}</strong>
+                <a href={item.href} target="_blank" rel="noreferrer">{item.cta}<Arrow rtl /></a>
+              </article>
+            ))}
           </div>
         </section>
 
         <section className="campaign-section section" id="outcomes">
-          <SectionHeading kicker="ته این جلسه چی گیرت میاد؟" title="قرار نیست فقط با چند تا ابزار جدید برگردی؛ باید روش کارت عوض بشه." intro="هدف اینه که دفعه بعد برای یک کار جدی سراغ AI رفتی، بدونی دقیقاً از کجا شروع کنی، چطور جلو بری و کجا خروجی رو زیر سؤال ببری." />
+          <SectionHeading kicker="ته این جلسه چی گیرت میاد؟" title="ابزار درست رو می‌شناسی، بهتر دستور می‌دی و تفاوت خروجی رو با چشم خودت می‌بینی." intro="بدون اصطلاح‌های پیچیده می‌بینی برای هر کار سراغ چه ابزاری بری، دقیقاً چه چیزی بهش بگی و چطور جواب معمولی رو مرحله‌به‌مرحله به یک خروجی حرفه‌ای و قابل ارائه تبدیل کنی." />
           <div className="outcome-grid">
             {[
-              ["خروجی شانسی؟ نه.", "یاد می‌گیری مسئله و اطلاعات زمینه‌ای رو جوری بچینی که AI جواب عمومی و بی‌مصرف تحویلت نده."],
-              ["یک روند قابل تکرار", "تحقیق، تولید، نقد و اصلاح رو به یک ورک‌فلو وصل می‌کنی؛ روندی که برای کار بعدی هم قابل استفاده است."],
-              ["خروجی قابل اعتماد", "می‌فهمی کجا باید به AI شک کنی، چطور جوابش رو بررسی کنی و کیفیت نهایی رو دست خودت نگه داری."],
+              ["ابزار مناسب هر کار", "با ابزارهای به‌روز و کاربردی AI آشنا می‌شی و می‌فهمی برای تحقیق، نوشتن، تصویر، کد یا کارهای روزمره سراغ کدومشون بری."],
+              ["دستورهایی که جواب دقیق می‌گیرن", "یاد می‌گیری چطور خواسته، اطلاعات، مثال و محدودیت‌هات رو واضح بگی تا AI جواب کلی و بی‌مصرف تحویلت نده."],
+              ["خروجی‌ای که واقعاً فرق داره", "قبل و بعد رو کنار هم می‌بینی؛ اینکه چطور یک جواب معمولی با اصلاح و بررسی به خروجی حرفه‌ای، چشم‌گیر و قابل استفاده تبدیل می‌شه."],
             ].map(([title, body], index) => (
               <article key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{body}</p></article>
             ))}
@@ -598,11 +640,12 @@ function CampaignPage() {
         </section>
 
         <section className="campaign-section section" id="agenda">
-          <SectionHeading kicker="قراره چه کار کنیم؟" title="اول می‌فهمیم مشکل کجاست، بعد زنده حلش می‌کنیم." intro="بخش اصلی جلسه ارائه خشک نیست؛ یک ورک‌فلو رو جلوی خودت می‌سازم تا منطق تصمیم‌ها رو هم ببینی، نه فقط نتیجه آخر رو." />
+          <SectionHeading kicker="قراره چه کار کنیم؟" title="ابزارهای به‌روز، دستور درست و خروجی‌ای که تفاوتش رو همون‌جا می‌بینی." intro="جلسه معرفی خشک ابزارها نیست. اول می‌فهمی برای هر کار کدوم ابزار به‌دردت می‌خوره، بعد روش درست دستور دادن رو یاد می‌گیری و در بخش اصلی، همه‌چیز جلوی خودت به یک خروجی واقعی تبدیل می‌شه." />
           <ol className="agenda-list">
-            <li><time>۱۰ دقیقه</time><div><strong>چرا بیشتر خروجی‌ها متوسط از آب درمیاد؟</strong><p>اشتباه‌های رایجی که باعث می‌شن AI فقط جواب خوشگل بده، نه جواب به‌دردبخور.</p></div></li>
-            <li><time>۵۵ دقیقه</time><div><strong>یک کار واقعی رو زنده جلو می‌بریم</strong><p>از تعریف مسئله و دادن زمینه تا ساخت خروجی، نقدکردن و اصلاحش.</p></div></li>
-            <li><time>۱۵ دقیقه</time><div><strong>همین روش برای کد، دیزاین و بیزینس</strong><p>می‌بینیم چطور منطق ثابت می‌مونه ولی ورودی و معیار بررسی برای هر حوزه عوض می‌شه.</p></div></li>
+            <li><time>۱۰ دقیقه</time><div><strong>نقشه ابزارهای به‌روز AI</strong><p>مهم‌ترین ابزارهای کاربردی رو می‌بینی و خیلی روشن می‌فهمی هرکدوم برای چه کاری خوبن و کجا نباید سراغشون بری.</p></div></li>
+            <li><time>۲۰ دقیقه</time><div><strong>چطور درست و حرفه‌ای دستور بدیم؟</strong><p>با مثال می‌بینی چطور خواسته، زمینه، نمونه و محدودیت رو بنویسی تا جواب دقیق‌تر، خلاق‌تر و قابل استفاده‌تری بگیری.</p></div></li>
+            <li><time>۳۵ دقیقه</time><div><strong>از یک درخواست ساده تا یک خروجی شگفت‌انگیز؛ زنده</strong><p>یک کار واقعی رو با چند ابزار جلو می‌بریم و تفاوت قبل و بعدِ دستور درست، نقد خروجی و اصلاح مرحله‌ای رو همون‌جا می‌بینی.</p></div></li>
+            <li><time>۱۵ دقیقه</time><div><strong>همین روش برای کد، دیزاین، محتوا و بیزینس</strong><p>با چند مثال کوتاه می‌بینی چطور همین روش رو متناسب با کار خودت استفاده کنی.</p></div></li>
             <li><time>۱۰ دقیقه</time><div><strong>سؤال‌های خودتون</strong><p>هر چیزی که هنوز مبهمه یا به کار خودت مربوطه رو مستقیم می‌پرسی.</p></div></li>
           </ol>
         </section>
@@ -641,20 +684,26 @@ function CampaignPage() {
           </div>
         </section>
 
+        <section className="campaign-section testimonials-section section" id="testimonials">
+          <SectionHeading kicker="نظر دانشجوهای قبلی" title="این بخش قراره با تجربه واقعی دانشجوهایی کامل بشه که قبلاً با من کلاس داشتن." intro="به‌زودی پنج نظر واقعی، همراه با نام و عکس هر دانشجو اینجا قرار می‌گیره. فعلاً جای کارت‌ها رو آماده کردم تا ساختار صفحه از همین حالا مشخص باشه." />
+          <div className="testimonial-grid">
+            {Array.from({ length: 5 }, (_, index) => (
+              <article className="testimonial-placeholder" key={index}>
+                <blockquote>نظر کامل یکی از دانشجوهای قبلی درباره کیفیت تدریس، شیوه توضیح و تجربه کلاس اینجا قرار می‌گیره.</blockquote>
+                <footer><UserCircle size={42} weight="duotone" /><div><strong>نام دانشجو</strong><span>دانشجوی دوره قبلی</span></div></footer>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="campaign-section experience-section section" id="experience">
-          <SectionHeading kicker="این تجربه از کجا اومده؟" title="از بیشتر از ۵ سال کار روی محصول واقعی؛ نه فقط بازی‌کردن با چند تا ابزار AI." intro="من چیزهایی رو می‌گم که وسط پروژه، کلاس، ددلاین و تصمیم واقعی به کارم اومدن. این هم خلاصه مسیریه که پشت این مسترکلاس قرار داره." />
+          <SectionHeading kicker="در کنار تدریس" title="بیشتر از ۵ سال تجربه ساخت محصول واقعی هم پشت این کلاس قرار داره." intro="این بخش رو کوتاه نگه داشتم چون تمرکز اصلی این صفحه روی سابقه تدریسه؛ اما این تجربه محصولیه که باعث شده مثال‌های کلاس فقط تئوری نباشن." />
           <div className="experience-grid">
             {experience.map((item) => (
               <article className="experience-card" key={item.company}>
                 <header><div><span>{item.company}</span><h3>{item.role}</h3></div><time>{item.period}</time></header>
-                <p>{item.body}</p>
-                <div className="experience-tags">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
               </article>
             ))}
-          </div>
-          <div className="teaching-proof">
-            <ChalkboardTeacher size={34} weight="fill" />
-            <div><span>در کنارش، سال‌هاست تدریس می‌کنم</span><strong>مکتب‌خونه · سکان آکادمی · مجتمع فنی</strong><p>پس فقط انجام‌دادن کار مهم نیست؛ بلدم منطق پشتش رو ساده، مرتب و قابل استفاده توضیح بدم.</p></div>
           </div>
         </section>
 
