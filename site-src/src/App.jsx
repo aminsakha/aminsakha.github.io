@@ -579,7 +579,7 @@ function CampaignPage() {
             </div>
           </div>
           <figure className="campaign-photo">
-            <img src="/images/amin-teaching.jpg" alt="امین سخا در حال تدریس" />
+            <img src="/images/amin-teaching.jpg?v=20260809" alt="امین سخا در حال تدریس" />
             <figcaption>تجربه واقعی، توضیح ساده، مثال قابل استفاده</figcaption>
           </figure>
         </section>
