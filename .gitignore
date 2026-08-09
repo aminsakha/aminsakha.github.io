@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.DS_Store
+AGENTS.md
+design-qa.md
+public/portfolio/amin-sakha-resume.pdf
