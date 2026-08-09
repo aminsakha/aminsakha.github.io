@@ -30,7 +30,7 @@ import {
 } from "@phosphor-icons/react";
 
 const EMAIL = "aminsakha2000@gmail.com";
-const TELEGRAM_URL = "https://t.me/amin3379";
+const TELEGRAM_URL = "https://t.me/maswebinar_register";
 
 const copy = {
   en: {
@@ -587,7 +587,7 @@ function CampaignPage() {
             </div>
           </div>
           <figure className="campaign-photo">
-            <img src="/images/amin-teaching.jpg?v=20260809" alt="مهندس امین سخا در حال تدریس" />
+            <img src="/images/amin-teaching.jpg?v=20260809b" alt="مهندس امین سخا، مدرس مسترکلاس هوش مصنوعی" />
             <figcaption>مهندس امین سخا؛ مدرس و توسعه‌دهنده اندروید</figcaption>
           </figure>
         </section>
