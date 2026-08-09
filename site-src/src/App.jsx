@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -527,6 +527,49 @@ function CampaignPage() {
     document.querySelector('meta[name="description"]')?.setAttribute("content", "مسترکلاس زنده مهندس امین سخا در Google Meet؛ آشنایی با ابزارهای به‌روز AI، روش درست دستور دادن و ساخت خروجی حرفه‌ای با مثال واقعی در ۹۰ دقیقه.");
   }, []);
 
+  useLayoutEffect(() => {
+    const groups = [
+      ".campaign-hero-copy > *, .campaign-photo",
+      ".campaign-proof article",
+      ".instructor-intro > *",
+      ".experience-section .section-heading > *, .experience-card",
+      ".teaching-spotlight .section-heading > *, .teaching-card",
+      ".audience-section .section-heading > *, .audience-grid > *",
+      "#outcomes .section-heading > *, .outcome-grid article",
+      "#agenda .section-heading > *, .agenda-list li",
+      ".referral-section > *",
+      ".testimonials-section .section-heading > *, .testimonial-placeholder",
+      ".logistics-section .section-heading > *, .logistics-grid article",
+      ".register-section > *",
+    ];
+
+    const elements = [];
+    groups.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((element, index) => {
+        element.classList.add("scroll-reveal");
+        element.style.setProperty("--reveal-delay", `${Math.min(index * 70, 280)}ms`);
+        elements.push(element);
+      });
+    });
+
+    if (!("IntersectionObserver" in window)) {
+      elements.forEach((element) => element.classList.add("is-visible"));
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+
   const copyMessage = async () => {
     const message = "سلام، برای ثبت‌نام مسترکلاس ۹۰ دقیقه‌ای AI پیام می‌دم.\nنام و نام خانوادگی: ...\nکد معرفی (اگر دارم): ...";
     const legacyCopy = () => {
@@ -634,14 +677,21 @@ function CampaignPage() {
           <SectionHeading kicker="سابقه تدریس" title="قبل از این مسترکلاس هم سال‌هاست آموزش می‌دم؛ می‌تونی نمونه‌هاش رو خودت ببینی." intro="اعتبار این جلسه فقط به سابقه کار با AI نیست. تجربه آموزش به من یاد داده موضوع پیچیده رو چطور ساده، مرحله‌به‌مرحله و قابل استفاده توضیح بدم." />
           <div className="teaching-card-grid">
             {teaching.map((item, index) => (
-              <article className={index === 0 ? "teaching-card teaching-card-featured" : "teaching-card"} key={item.platform}>
+              <a
+                className={index === 0 ? "teaching-card teaching-card-featured" : "teaching-card"}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${item.cta}؛ ${item.title}`}
+                key={item.platform}
+              >
                 <div className="teaching-card-icon"><GraduationCap size={30} weight="fill" /></div>
                 <span>{item.platform}</span>
                 <h3>{item.title}</h3>
                 <p>{item.body}</p>
                 <strong>{item.fact}</strong>
-                <a href={item.href} target="_blank" rel="noreferrer">{item.cta}<Arrow rtl /></a>
-              </article>
+                <span className="teaching-card-link">{item.cta}<Arrow rtl /></span>
+              </a>
             ))}
           </div>
         </section>
@@ -739,7 +789,7 @@ function CampaignPage() {
             <div className="register-note"><SealCheck size={20} weight="fill" />بعد از تأیید پرداخت، مستقیم وارد کانال اختصاصی شرکت‌کننده‌ها می‌شی.</div>
           </div>
           <div className="register-actions">
-            <a className="button button-light" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={20} weight="fill" />ثبت‌نام در تلگرام</a>
+            <a className="button button-telegram" href={TELEGRAM_URL} target="_blank" rel="noreferrer"><TelegramLogo size={22} weight="fill" />ثبت‌نام در تلگرام</a>
             <button className="button button-ghost" type="button" onClick={copyMessage}>{copied ? "متن کپی شد" : "کپی متن ثبت‌نام"}</button>
           </div>
         </section>
