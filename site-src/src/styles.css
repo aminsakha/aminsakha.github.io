@@ -157,7 +157,7 @@ img { display: block; max-width: 100%; }
 .campaign-proof span { margin-top: 7px; color: var(--muted); font-size: 13px; }
 .instructor-intro { margin-top: 74px; padding: 40px; display: grid; grid-template-columns: minmax(250px, .72fr) minmax(0, 1.28fr); gap: 48px; align-items: stretch; border: 1px solid #31466a; border-radius: 18px; background: #0b1829; }
 .instructor-intro figure { height: 590px; min-height: 510px; margin: 0; align-self: center; overflow: hidden; border-radius: 13px; background: #111e30; }
-.instructor-intro figure img { width: 100%; height: 100%; object-fit: cover; object-position: 80% 42%; }
+.instructor-intro figure img { width: 100%; height: 100%; object-fit: cover; object-position: 65% 42%; }
 .instructor-copy { align-self: center; }
 .instructor-copy .eyebrow { margin-bottom: 14px; }
 .instructor-copy h2 { margin: 0; max-width: 790px; font-size: clamp(34px, 4vw, 54px); line-height: 1.3; letter-spacing: -.035em; }
