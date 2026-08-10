@@ -58,8 +58,8 @@ img { display: block; max-width: 100%; }
 .hero-copy h1 { max-width: 760px; margin: 0; font-size: clamp(46px, 5.2vw, 76px); line-height: .98; letter-spacing: -.055em; font-weight: 690; }
 .hero-copy h1 span { color: #86a7ff; }
 .hero-summary { max-width: 720px; margin: 26px 0 32px; color: var(--muted); font-size: 18px; line-height: 1.72; }
-.hero-photo { margin: 0; height: 570px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center center; }
+.hero-photo { margin: 0; height: 500px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 100% 42%; }
 .proof-row { margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr); max-width: 720px; border: 1px solid var(--line); border-radius: 10px; background: #091525; }
 .proof-row div { padding: 20px 22px; }
 .proof-row div + div { border-inline-start: 1px solid var(--line); }
@@ -273,6 +273,8 @@ img { display: block; max-width: 100%; }
   .main-nav { gap: 22px; }
   .hero, .campaign-hero { grid-template-columns: 1fr 360px; gap: 36px; }
   .hero-photo, .campaign-photo { height: 500px; }
+  .hero-photo { height: 440px; }
+  .hero-photo img { object-position: 70% 42%; }
   .pillar-grid { grid-template-columns: repeat(3, 1fr); }
   .pillar { grid-column: span 1 !important; }
   .workshop-card { grid-column: span 3; }
@@ -288,6 +290,8 @@ img { display: block; max-width: 100%; }
   .menu-button { display: grid; }
   .hero, .campaign-hero { grid-template-columns: 1fr; padding-top: 54px; }
   .hero-photo, .campaign-photo { grid-row: 1; height: 450px; }
+  .hero-photo { height: 360px; }
+  .hero-photo img { object-position: 100% 42%; }
   .hero-copy h1, .campaign-hero h1 { font-size: clamp(44px, 9vw, 68px); }
   .pillar-grid { grid-template-columns: 1fr; }
   .pillar, .workshop-card { grid-column: 1 !important; border-inline-end: 0; border-bottom: 1px solid var(--line); }
@@ -323,6 +327,7 @@ img { display: block; max-width: 100%; }
   .section-spaced, .campaign-section { padding-block: 78px; }
   .hero { min-height: auto; padding-block: 30px 54px; }
   .hero-photo, .campaign-photo { height: 390px; }
+  .hero-photo { height: 340px; }
   .hero-copy h1, .campaign-hero h1 { font-size: 43px; }
   [dir="rtl"] .hero-copy h1, [dir="rtl"] .campaign-hero h1 { font-size: 40px; }
   .hero-summary, .campaign-hero-copy > p:not(.eyebrow) { font-size: 16px; }
