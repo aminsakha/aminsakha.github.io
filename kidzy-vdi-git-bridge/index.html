@@ -87,25 +87,28 @@
 
     <!-- Configuration Card -->
     <section class="bg-[#111c30] rounded-2xl border border-slate-800 p-5 shadow-xl space-y-5">
-      <!-- Project Switcher Tabs -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+      <!-- Project Switcher -->
+      <div class="space-y-3 border-b border-slate-800/80 pb-4 min-w-0">
         <div>
-          <label class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Target Project</label>
-          <div class="flex flex-wrap gap-2 mt-1.5">
-            <button type="button" id="btnProjVidzy" onclick="selectProject('vidzy')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30 border border-brand-500">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-              Vidzy Android <code class="text-[11px] opacity-75 font-mono">kidzy.vidzy.android</code>
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Target Project</p>
+          <div class="flex flex-wrap gap-2 mt-1.5" role="group" aria-label="Target project">
+            <button type="button" id="btnProjVidzy" onclick="selectProject('vidzy')" aria-pressed="true" class="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 bg-brand-600 text-white shadow-sm shadow-brand-600/30 border-brand-500">
+              <span class="w-2 h-2 rounded-full bg-emerald-400" aria-hidden="true"></span>Vidzy Android
             </button>
-            <button type="button" id="btnProjStory" onclick="selectProject('story')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700">
-              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-              Parande / Story <code class="text-[11px] opacity-75 font-mono">kidzy.story.android</code>
+            <button type="button" id="btnProjStory" onclick="selectProject('story')" aria-pressed="false" class="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 bg-slate-800 hover:bg-slate-700/80 text-slate-300 border-slate-700">
+              <span class="w-2 h-2 rounded-full bg-amber-400" aria-hidden="true"></span>Parande / Story
+            </button>
+            <button type="button" id="btnProjBank" onclick="selectProject('bank')" aria-pressed="false" class="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 bg-slate-800 hover:bg-slate-700/80 text-slate-300 border-slate-700">
+              <span class="w-2 h-2 rounded-full bg-sky-400" aria-hidden="true"></span>Bank Android
+            </button>
+            <button type="button" id="btnProjParental" onclick="selectProject('parental')" aria-pressed="false" class="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 bg-slate-800 hover:bg-slate-700/80 text-slate-300 border-slate-700">
+              <span class="w-2 h-2 rounded-full bg-violet-400" aria-hidden="true"></span>Parental Android
             </button>
           </div>
         </div>
-
-        <div class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800 flex items-center gap-2">
-          <span class="text-indigo-400">Remote:</span>
-          <span id="repoUrlText" class="text-slate-200 truncate max-w-xs sm:max-w-md">http://gp.devpod.ir/pod/kidzyland/vidzy/kidzy.vidzy.android.git</span>
+        <div class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800 flex items-center gap-2 min-w-0">
+          <span class="text-indigo-400 shrink-0">Remote:</span>
+          <span id="repoUrlText" class="text-slate-200 truncate">http://gp.devpod.ir/pod/kidzyland/vidzy/kidzy.vidzy.android.git</span>
         </div>
       </div>
 
@@ -245,7 +248,7 @@
 
   <script>
     // State
-    let currentProject = 'vidzy'; // 'vidzy' or 'story'
+    let currentProject = 'vidzy'; // Selected project key
     let currentMode = 'push';      // 'push' or 'pull'
 
     const projects = {
@@ -262,6 +265,20 @@
         folder: 'kidzy.story.android',
         cloneUrl: 'http://gp.devpod.ir/pod/kidzyland/story/kidzy.story.android.git',
         webBase: 'http://gp.devpod.ir/pod/kidzyland/story/kidzy.story.android'
+      },
+      bank: {
+        id: 'bank',
+        name: 'Kidzy.Bank.Android',
+        folder: 'kidzy.bank.android',
+        cloneUrl: 'http://gp.devpod.ir/pod/kidzyland/bank/kidzy.bank.android.git',
+        webBase: 'http://gp.devpod.ir/pod/kidzyland/bank/kidzy.bank.android'
+      },
+      parental: {
+        id: 'parental',
+        name: 'Kidzy.Parental.Android',
+        folder: 'kidzy.parental.android',
+        cloneUrl: 'http://gp.devpod.ir/pod/kidzyland/parental/kidzy.parental.android.git',
+        webBase: 'http://gp.devpod.ir/pod/kidzyland/parental/kidzy.parental.android'
       }
     };
 
@@ -274,8 +291,12 @@
     const archiveNamePreview = document.getElementById('archiveNamePreview');
     const zipNameLabel1 = document.getElementById('zipNameLabel1');
     const repoUrlText = document.getElementById('repoUrlText');
-    const btnProjVidzy = document.getElementById('btnProjVidzy');
-    const btnProjStory = document.getElementById('btnProjStory');
+    const projectButtons = {
+      vidzy: document.getElementById('btnProjVidzy'),
+      story: document.getElementById('btnProjStory'),
+      bank: document.getElementById('btnProjBank'),
+      parental: document.getElementById('btnProjParental')
+    };
     const btnModePush = document.getElementById('btnModePush');
     const btnModePull = document.getElementById('btnModePull');
     const headerBadge = document.getElementById('headerBadge');
@@ -319,14 +340,15 @@
     }
 
     function selectProject(key) {
+      if (!projects[key]) return;
       currentProject = key;
-      if (key === 'vidzy') {
-        btnProjVidzy.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30 border border-brand-500";
-        btnProjStory.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700";
-      } else {
-        btnProjStory.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30 border border-brand-500";
-        btnProjVidzy.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700";
-      }
+      Object.entries(projectButtons).forEach(([projectKey, button]) => {
+        const selected = projectKey === key;
+        button.className = "px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 " + (selected
+          ? "bg-brand-600 text-white shadow-sm shadow-brand-600/30 border-brand-500"
+          : "bg-slate-800 hover:bg-slate-700/80 text-slate-300 border-slate-700");
+        button.setAttribute('aria-pressed', String(selected));
+      });
       generate();
     }
 
