@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kidzy VDI Git Bridge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'Menlo', 'Consolas', 'monospace']
+          },
+          colors: {
+            brand: {
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    pre::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    pre::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    pre::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.3);
+      border-radius: 4px;
+    }
+    pre::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-[#0b1120] text-slate-100 min-h-screen font-sans flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-[#0e1626]/90 backdrop-blur sticky top-0 z-30 px-4 sm:px-6 py-3.5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/25">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Kidzy VDI Git Bridge
+            <span id="headerBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Auto-Unzip &amp; Push</span>
+          </h1>
+          <p class="text-xs text-slate-400 hidden sm:block">Automated air-gapped commit transport between Mac &amp; Windows Horizon VDI</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Sync Direction Toggle Tabs -->
+        <div class="bg-slate-900/90 p-1 rounded-xl border border-slate-800 flex items-center gap-1 shadow-inner">
+          <button type="button" id="btnModePush" onclick="setMode('push')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+            <span>Push (Mac &rarr; VDI)</span>
+          </button>
+          <button type="button" id="btnModePull" onclick="setMode('pull')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-400 hover:text-slate-200">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
+            <span>Pull (VDI &rarr; Mac)</span>
+          </button>
+        </div>
+        <span class="text-xs text-slate-400 font-mono hidden md:inline ml-2">User: <strong class="text-slate-200">m.sakha</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 w-full flex-grow space-y-6">
+
+    <!-- Configuration Card -->
+    <section class="bg-[#111c30] rounded-2xl border border-slate-800 p-5 shadow-xl space-y-5">
+      <!-- Project Switcher Tabs -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+        <div>
+          <label class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Target Project</label>
+          <div class="flex flex-wrap gap-2 mt-1.5">
+            <button type="button" id="btnProjVidzy" onclick="selectProject('vidzy')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30 border border-brand-500">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Vidzy Android <code class="text-[11px] opacity-75 font-mono">kidzy.vidzy.android</code>
+            </button>
+            <button type="button" id="btnProjStory" onclick="selectProject('story')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              Parande / Story <code class="text-[11px] opacity-75 font-mono">kidzy.story.android</code>
+            </button>
+          </div>
+        </div>
+
+        <div class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800 flex items-center gap-2">
+          <span class="text-indigo-400">Remote:</span>
+          <span id="repoUrlText" class="text-slate-200 truncate max-w-xs sm:max-w-md">http://gp.devpod.ir/pod/kidzyland/vidzy/kidzy.vidzy.android.git</span>
+        </div>
+      </div>
+
+      <!-- Branch Inputs Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 text-xs">
+        
+        <!-- Active Branch -->
+        <div class="lg:col-span-6 space-y-1">
+          <label for="branchName" class="block font-semibold text-slate-300">
+            Active Working Branch <span class="text-red-400">*</span>
+          </label>
+          <input type="text" id="branchName" value="fix/general-hotfix" 
+            class="w-full px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" 
+            placeholder="e.g. fix/general-hotfix">
+          <p class="text-[10px] text-slate-400">Auto-sanitizes slashes for the archive filename.</p>
+        </div>
+
+        <!-- Base Branch Target -->
+        <div class="lg:col-span-3 space-y-1">
+          <label for="baseBranch" class="block font-semibold text-slate-300">
+            Base / Target Branch <span class="text-red-400">*</span>
+          </label>
+          <div class="flex gap-1.5">
+            <input type="text" id="baseBranch" value="master" 
+              class="w-full px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 outline-none transition">
+            <button type="button" onclick="setBase('master')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-medium">master</button>
+            <button type="button" onclick="setBase('develop')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-medium">develop</button>
+          </div>
+          <p class="text-[10px] text-slate-400">Branch to calculate diff against.</p>
+        </div>
+
+        <!-- Generated Archive Name Display -->
+        <div class="lg:col-span-3 space-y-1">
+          <label class="block font-semibold text-slate-300">Generated Archive File</label>
+          <div class="px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-800 text-emerald-400 font-mono text-xs truncate flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+            <span id="archiveNamePreview">fix-general-hotfix.zip</span>
+          </div>
+          <p class="text-[10px] text-slate-400" id="archiveHintText">File uploaded into Talk Messenger.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Execution Steps (Only 2 Steps) -->
+    <div class="space-y-6">
+
+      <!-- STEP 1: MAC in Push Mode / VDI in Pull Mode -->
+      <section class="bg-[#111c30] rounded-2xl border border-slate-800 p-5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-slate-800/80 gap-3">
+          <div class="flex items-center space-x-3">
+            <span class="h-7 w-7 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30 flex items-center justify-center font-bold text-xs">1</span>
+            <div>
+              <h2 id="step1Title" class="text-sm font-bold text-white flex items-center gap-2">
+                On Your Mac &mdash; Package Bundle &amp; Zip
+              </h2>
+              <p id="step1Subtitle" class="text-xs text-slate-400">Run inside your repository terminal on your Mac</p>
+            </div>
+          </div>
+          <button id="step1Btn" onclick="copyCommand('step1Code', this)" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <span id="step1BtnText">Copy Mac Command</span>
+          </button>
+        </div>
+
+        <div class="relative group">
+          <pre class="bg-[#080d19] p-4 rounded-xl text-emerald-400 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-900 shadow-inner whitespace-pre-wrap break-all"><code id="step1Code"></code></pre>
+        </div>
+        
+        <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+          <span id="step1FooterText">After running: drag the generated <code class="text-slate-200 font-mono" id="zipNameLabel1">fix-general-hotfix.zip</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and click download in VDI.</span>
+        </div>
+      </section>
+
+      <!-- STEP 2: VDI in Push Mode / MAC in Pull Mode -->
+      <section class="bg-[#111c30] rounded-2xl border border-slate-800 p-5 shadow-xl space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800/80 gap-3">
+          <div class="flex items-center space-x-3">
+            <span class="h-7 w-7 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-xs">2</span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="step2Title" class="text-sm font-bold text-white">In VDI PowerShell</h2>
+                <span id="step2Badge1" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Auto-Unzip Included</span>
+                <span id="step2Badge2" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">Auto-Clones if missing</span>
+              </div>
+              <p id="step2Subtitle" class="text-xs text-slate-400 mt-0.5">Automates unzipping, repo verification, fetching bundle, pushing to GitLab, and cleanup</p>
+            </div>
+          </div>
+          <button id="step2Btn" onclick="copyCommand('step2Code', this)" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <span id="step2BtnText">Copy VDI Command</span>
+          </button>
+        </div>
+
+        <!-- Visual Step Pipeline Breakdown -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-[11px] text-slate-300 font-medium">
+          <div class="bg-[#0b1220] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2">
+            <span class="text-emerald-400 font-mono font-bold">1.</span>
+            <span id="pipeStep1">Unzips .zip file automatically</span>
+          </div>
+          <div class="bg-[#0b1220] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2">
+            <span class="text-emerald-400 font-mono font-bold">2.</span>
+            <span id="pipeStep2">Clones repo if missing</span>
+          </div>
+          <div class="bg-[#0b1220] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2">
+            <span class="text-emerald-400 font-mono font-bold">3.</span>
+            <span id="pipeStep3">Fetches branch from bundle</span>
+          </div>
+          <div class="bg-[#0b1220] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2">
+            <span class="text-emerald-400 font-mono font-bold">4.</span>
+            <span id="pipeStep4">Pushes branch to GitLab</span>
+          </div>
+          <div class="bg-[#0b1220] p-2.5 rounded-lg border border-slate-800 flex items-center gap-2 col-span-2 sm:col-span-1">
+            <span class="text-emerald-400 font-mono font-bold">5.</span>
+            <span id="pipeStep5">Cleans up temp files</span>
+          </div>
+        </div>
+
+        <div class="relative group">
+          <pre class="bg-[#080d19] p-4 rounded-xl text-sky-400 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-900 shadow-inner whitespace-pre-wrap break-all"><code id="step2Code"></code></pre>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer class="mt-auto border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-400">
+    <p>Kidzy VDI Git Bridge &bull; Built for zero-friction push and automated unzipping in air-gapped environments</p>
+  </footer>
+
+  <script>
+    // State
+    let currentProject = 'vidzy'; // 'vidzy' or 'story'
+    let currentMode = 'push';      // 'push' or 'pull'
+
+    const projects = {
+      vidzy: {
+        id: 'vidzy',
+        name: 'Kidzy.Vidzy.Android',
+        folder: 'kidzy.vidzy.android',
+        cloneUrl: 'http://gp.devpod.ir/pod/kidzyland/vidzy/kidzy.vidzy.android.git',
+        webBase: 'http://gp.devpod.ir/pod/kidzyland/vidzy/kidzy.vidzy.android'
+      },
+      story: {
+        id: 'story',
+        name: 'Kidzy.Story.Android',
+        folder: 'kidzy.story.android',
+        cloneUrl: 'http://gp.devpod.ir/pod/kidzyland/story/kidzy.story.android.git',
+        webBase: 'http://gp.devpod.ir/pod/kidzyland/story/kidzy.story.android'
+      }
+    };
+
+    // DOM Elements
+    const branchNameInput = document.getElementById('branchName');
+    const baseBranchInput = document.getElementById('baseBranch');
+    const step1Code = document.getElementById('step1Code');
+    const step2Code = document.getElementById('step2Code');
+    const archiveNamePreview = document.getElementById('archiveNamePreview');
+    const zipNameLabel1 = document.getElementById('zipNameLabel1');
+    const repoUrlText = document.getElementById('repoUrlText');
+    const btnProjVidzy = document.getElementById('btnProjVidzy');
+    const btnProjStory = document.getElementById('btnProjStory');
+    const btnModePush = document.getElementById('btnModePush');
+    const btnModePull = document.getElementById('btnModePull');
+    const headerBadge = document.getElementById('headerBadge');
+
+    const step1Title = document.getElementById('step1Title');
+    const step1Subtitle = document.getElementById('step1Subtitle');
+    const step1BtnText = document.getElementById('step1BtnText');
+    const step1FooterText = document.getElementById('step1FooterText');
+
+    const step2Title = document.getElementById('step2Title');
+    const step2Subtitle = document.getElementById('step2Subtitle');
+    const step2Badge1 = document.getElementById('step2Badge1');
+    const step2Badge2 = document.getElementById('step2Badge2');
+    const step2BtnText = document.getElementById('step2BtnText');
+
+    const pipeStep1 = document.getElementById('pipeStep1');
+    const pipeStep2 = document.getElementById('pipeStep2');
+    const pipeStep3 = document.getElementById('pipeStep3');
+    const pipeStep4 = document.getElementById('pipeStep4');
+    const pipeStep5 = document.getElementById('pipeStep5');
+
+    function sanitizeBranch(name) {
+      if (!name) return 'hotfix';
+      return name.replace(/[\/\\]/g, '-');
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      if (mode === 'push') {
+        btnModePush.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30";
+        btnModePull.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-400 hover:text-slate-200";
+        headerBadge.textContent = "Auto-Unzip & Push";
+        headerBadge.className = "text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
+      } else {
+        btnModePull.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30";
+        btnModePush.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-400 hover:text-slate-200";
+        headerBadge.textContent = "Auto-Bundle & Pull";
+        headerBadge.className = "text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30";
+      }
+      generate();
+    }
+
+    function selectProject(key) {
+      currentProject = key;
+      if (key === 'vidzy') {
+        btnProjVidzy.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30 border border-brand-500";
+        btnProjStory.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700";
+      } else {
+        btnProjStory.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30 border border-brand-500";
+        btnProjVidzy.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700";
+      }
+      generate();
+    }
+
+    function setBase(val) {
+      baseBranchInput.value = val;
+      generate();
+    }
+
+    function generate() {
+      const proj = projects[currentProject];
+      const branch = branchNameInput.value.trim() || 'fix/general-hotfix';
+      const base = baseBranchInput.value.trim() || 'master';
+      const sanitized = sanitizeBranch(branch);
+      const bundleName = `${sanitized}.bundle`;
+      const zipName = `${sanitized}.zip`;
+
+      repoUrlText.textContent = proj.cloneUrl;
+      archiveNamePreview.textContent = zipName;
+      zipNameLabel1.textContent = zipName;
+
+      if (currentMode === 'push') {
+        // PUSH MODE UI LABELS
+        step1Title.innerHTML = `On Your Mac &mdash; Package Bundle &amp; Zip`;
+        step1Subtitle.textContent = `Run inside your repository terminal on your Mac`;
+        step1BtnText.textContent = `Copy Mac Command`;
+        step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and click download in VDI.`;
+
+        step2Title.textContent = `In VDI PowerShell`;
+        step2Subtitle.textContent = `Automates unzipping, repo verification, fetching bundle, pushing to GitLab, and cleanup`;
+        step2Badge1.textContent = `Auto-Unzip Included`;
+        step2Badge2.textContent = `Auto-Clones if missing`;
+        step2Badge2.style.display = 'inline-block';
+        step2BtnText.textContent = `Copy VDI Command`;
+
+        pipeStep1.textContent = "Unzips .zip file automatically";
+        pipeStep2.textContent = "Clones repo if missing";
+        pipeStep3.textContent = "Fetches branch from bundle";
+        pipeStep4.textContent = "Pushes branch to GitLab";
+        pipeStep5.textContent = "Cleans up temp files";
+
+        // STEP 1 (MAC: EXPORT BUNDLE & ZIP)
+        const macCommand = `BUNDLE="${bundleName}"
+ZIP="${zipName}"
+git bundle create "$HOME/Downloads/$BUNDLE" ${base}..${branch}
+(cd "$HOME/Downloads" && zip -q -m "$ZIP" "$BUNDLE")
+echo "✔ Saved to ~/Downloads/$ZIP - Send this file to Talk!"`;
+        step1Code.textContent = macCommand;
+
+        // STEP 2 (VDI: AUTO-UNZIP, CLONE IF MISSING, FETCH, PUSH & CLEANUP)
+        const vdiCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\m.sakha"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; $zip = "C:\\Users\\m.sakha\\Downloads\\${zipName}"; if (-not (Test-Path $zip)) { $zip = (Get-ChildItem "C:\\Users\\m.sakha\\Downloads" -Filter "*.zip" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName }; $tmp = "C:\\Users\\m.sakha\\Downloads\\_bundle_tmp"; if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }; Expand-Archive -Path $zip -DestinationPath $tmp -Force; Set-Location "C:\\Users\\m.sakha\\${proj.folder}"; git fetch "$tmp\\${bundleName}" ${branch}:${branch}; git push origin ${branch}; Remove-Item $tmp -Recurse -Force; Remove-Item $zip -Force; Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" -ForegroundColor Green`;
+        step2Code.textContent = vdiCommand;
+
+      } else {
+        // PULL MODE UI LABELS (VDI -> Talk -> Mac)
+        step1Title.innerHTML = `In VDI PowerShell &mdash; Pull from GitLab &amp; Zip Bundle`;
+        step1Subtitle.textContent = `Run inside VDI PowerShell to pull latest changes from GitLab and export a zip`;
+        step1BtnText.textContent = `Copy VDI Export Command`;
+        step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and download it on your Mac.`;
+
+        step2Title.textContent = `On Your Mac Terminal`;
+        step2Subtitle.textContent = `Automates unzipping the downloaded archive, fetching branch into local repo, and checking it out`;
+        step2Badge1.textContent = `Auto-Unzip Included`;
+        step2Badge2.textContent = `Auto-Checkout`;
+        step2Badge2.style.display = 'inline-block';
+        step2BtnText.textContent = `Copy Mac Pull Command`;
+
+        pipeStep1.textContent = "Unzips .zip file in ~/Downloads";
+        pipeStep2.textContent = "Finds bundle automatically";
+        pipeStep3.textContent = "Fetches branch from bundle";
+        pipeStep4.textContent = "Checks out branch locally";
+        pipeStep5.textContent = "Cleans up bundle & zip";
+
+        // STEP 1 (VDI: PULL LATEST GITLAB & BUNDLE TO ZIP)
+        const vdiExportCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\m.sakha"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; Set-Location "C:\\Users\\m.sakha\\${proj.folder}"; git fetch origin; git checkout ${branch} 2>$null; if ($LASTEXITCODE -ne 0) { git checkout -b ${branch} origin/${branch} } else { git pull origin ${branch} }; $bundle = "C:\\Users\\m.sakha\\Downloads\\${bundleName}"; $zip = "C:\\Users\\m.sakha\\Downloads\\${zipName}"; if (Test-Path $bundle) { Remove-Item $bundle -Force }; if (Test-Path $zip) { Remove-Item $zip -Force }; git bundle create $bundle ${base}..${branch}; Compress-Archive -Path $bundle -DestinationPath $zip -Force; Remove-Item $bundle -Force; Write-Host "✔ Saved to $zip - Send this file to Talk!" -ForegroundColor Green`;
+        step1Code.textContent = vdiExportCommand;
+
+        // STEP 2 (MAC: AUTO-UNZIP, FETCH & CHECKOUT BRANCH)
+        const macImportCommand = `ZIP="$HOME/Downloads/${zipName}"
+[ -f "$ZIP" ] || ZIP=$(ls -t "$HOME/Downloads"/*.zip 2>/dev/null | head -n 1)
+TMP="$HOME/Downloads/_bundle_tmp"
+rm -rf "$TMP" && mkdir -p "$TMP"
+unzip -q -o "$ZIP" -d "$TMP"
+git fetch "$TMP/${bundleName}" "${branch}:${branch}" --force
+git checkout "${branch}"
+rm -rf "$TMP" "$ZIP"
+echo "✔ Successfully updated and checked out ${branch} on your Mac!"`;
+        step2Code.textContent = macImportCommand;
+      }
+    }
+
+    function copyCommand(elementId, btn) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const text = el.innerText;
+
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+
+      const originalHTML = btn.innerHTML;
+      btn.classList.add('bg-teal-500', 'text-slate-950', 'font-bold');
+      btn.classList.remove('bg-indigo-600', 'bg-emerald-600', 'hover:bg-indigo-500', 'hover:bg-emerald-500');
+      btn.innerHTML = `
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span>Copied!</span>
+      `;
+
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.classList.remove('bg-teal-500', 'text-slate-950', 'font-bold');
+        if (elementId === 'step1Code') {
+          btn.classList.add('bg-indigo-600', 'hover:bg-indigo-500');
+        } else {
+          btn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+        }
+      }, 1600);
+    }
+
+    branchNameInput.addEventListener('input', generate);
+    baseBranchInput.addEventListener('input', generate);
+
+    window.onload = function() {
+      generate();
+    };
+  </script>
+</body>
+</html>
