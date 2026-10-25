@@ -77,7 +77,7 @@
             <span>Pull (VDI &rarr; Mac)</span>
           </button>
         </div>
-        <span class="text-xs text-slate-400 font-mono hidden md:inline ml-2">User: <strong class="text-slate-200">m.sakha</strong></span>
+        <span class="text-xs text-slate-400 font-mono hidden md:inline ml-2">User: <strong id="vdiUsernameLabel" class="text-slate-200">m.sakha</strong></span>
       </div>
     </div>
   </header>
@@ -107,6 +107,12 @@
           <span class="text-indigo-400">Remote:</span>
           <span id="repoUrlText" class="text-slate-200 truncate max-w-xs sm:max-w-md">http://gp.devpod.ir/pod/kidzyland/vidzy/kidzy.vidzy.android.git</span>
         </div>
+      </div>
+
+      <div class="space-y-1">
+        <label class="block text-xs font-semibold text-slate-300" for="vdiUsername">VDI Username</label>
+        <input type="text" id="vdiUsername" value="m.sakha" placeholder="m.sakha" spellcheck="false" autocomplete="off"
+          class="w-full sm:w-64 px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 outline-none transition">
       </div>
 
       <!-- Branch Inputs Grid -->
@@ -260,6 +266,7 @@
     };
 
     // DOM Elements
+    const vdiUsernameInput = document.getElementById('vdiUsername');
     const branchNameInput = document.getElementById('branchName');
     const baseBranchInput = document.getElementById('baseBranch');
     const step1Code = document.getElementById('step1Code');
@@ -330,6 +337,9 @@
 
     function generate() {
       const proj = projects[currentProject];
+      const username = vdiUsernameInput.value.trim() || 'm.sakha';
+      document.getElementById('vdiUsernameLabel').textContent = username;
+      const vdiUsername = username.replace(/[`"$]/g, '`$&');
       const branch = branchNameInput.value.trim() || 'fix/general-hotfix';
       const base = baseBranchInput.value.trim() || 'master';
       const sanitized = sanitizeBranch(branch);
@@ -369,7 +379,7 @@ echo "✔ Saved to ~/Downloads/$ZIP - Send this file to Talk!"`;
         step1Code.textContent = macCommand;
 
         // STEP 2 (VDI: AUTO-UNZIP, CLONE IF MISSING, FETCH, PUSH & CLEANUP)
-        const vdiCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\m.sakha"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; $zip = "C:\\Users\\m.sakha\\Downloads\\${zipName}"; if (-not (Test-Path $zip)) { $zip = (Get-ChildItem "C:\\Users\\m.sakha\\Downloads" -Filter "*.zip" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName }; $tmp = "C:\\Users\\m.sakha\\Downloads\\_bundle_tmp"; if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }; Expand-Archive -Path $zip -DestinationPath $tmp -Force; Set-Location "C:\\Users\\m.sakha\\${proj.folder}"; git fetch "$tmp\\${bundleName}" ${branch}:${branch}; git push origin ${branch}; Remove-Item $tmp -Recurse -Force; Remove-Item $zip -Force; Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" -ForegroundColor Green`;
+        const vdiCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (-not (Test-Path $zip)) { $zip = (Get-ChildItem "C:\\Users\\${vdiUsername}\\Downloads" -Filter "*.zip" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName }; $tmp = "C:\\Users\\${vdiUsername}\\Downloads\\_bundle_tmp"; if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }; Expand-Archive -Path $zip -DestinationPath $tmp -Force; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch "$tmp\\${bundleName}" ${branch}:${branch}; git push origin ${branch}; Remove-Item $tmp -Recurse -Force; Remove-Item $zip -Force; Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" -ForegroundColor Green`;
         step2Code.textContent = vdiCommand;
 
       } else {
@@ -393,7 +403,7 @@ echo "✔ Saved to ~/Downloads/$ZIP - Send this file to Talk!"`;
         pipeStep5.textContent = "Cleans up bundle & zip";
 
         // STEP 1 (VDI: PULL LATEST GITLAB & BUNDLE TO ZIP)
-        const vdiExportCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\m.sakha"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; Set-Location "C:\\Users\\m.sakha\\${proj.folder}"; git fetch origin; git checkout ${branch} 2>$null; if ($LASTEXITCODE -ne 0) { git checkout -b ${branch} origin/${branch} } else { git pull origin ${branch} }; $bundle = "C:\\Users\\m.sakha\\Downloads\\${bundleName}"; $zip = "C:\\Users\\m.sakha\\Downloads\\${zipName}"; if (Test-Path $bundle) { Remove-Item $bundle -Force }; if (Test-Path $zip) { Remove-Item $zip -Force }; git bundle create $bundle ${base}..${branch}; Compress-Archive -Path $bundle -DestinationPath $zip -Force; Remove-Item $bundle -Force; Write-Host "✔ Saved to $zip - Send this file to Talk!" -ForegroundColor Green`;
+        const vdiExportCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch origin; git checkout ${branch} 2>$null; if ($LASTEXITCODE -ne 0) { git checkout -b ${branch} origin/${branch} } else { git pull origin ${branch} }; $bundle = "C:\\Users\\${vdiUsername}\\Downloads\\${bundleName}"; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (Test-Path $bundle) { Remove-Item $bundle -Force }; if (Test-Path $zip) { Remove-Item $zip -Force }; git bundle create $bundle ${base}..${branch}; Compress-Archive -Path $bundle -DestinationPath $zip -Force; Remove-Item $bundle -Force; Write-Host "✔ Saved to $zip - Send this file to Talk!" -ForegroundColor Green`;
         step1Code.textContent = vdiExportCommand;
 
         // STEP 2 (MAC: AUTO-UNZIP, FETCH & CHECKOUT BRANCH)
@@ -446,6 +456,7 @@ echo "✔ Successfully updated and checked out ${branch} on your Mac!"`;
       }, 1600);
     }
 
+    vdiUsernameInput.addEventListener('input', generate);
     branchNameInput.addEventListener('input', generate);
     baseBranchInput.addEventListener('input', generate);
 
