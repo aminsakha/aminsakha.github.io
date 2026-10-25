@@ -385,7 +385,7 @@
       generate();
     }
 
-    function macHostCommand(mode, branch, bundleName, zipName) {
+    function macHostCommand(mode, branch, bundleName, zipName, originUrl = projects[currentProject].cloneUrl) {
       const shQuote = value => "'" + value.replace(/'/g, "'\\''") + "'";
       const setup = [
         '(',
@@ -409,28 +409,54 @@
         ]).join('\n');
       }
       return setup.concat([
+        `  bridgeExpectedOrigin=${shQuote(originUrl)}`,
+        '  bridgeOrigin=$(git remote get-url origin)',
+        '  bridgeOrigin="${bridgeOrigin%/}"',
+        '  bridgeExpectedOrigin="${bridgeExpectedOrigin%/}"',
+        "  [ \"${bridgeOrigin%.git}\" = \"${bridgeExpectedOrigin%.git}\" ] || { printf '%s\\n' 'origin does not match the selected GitLab project. No references were changed.' >&2; exit 1; }",
+        '  bridgeConfiguredRemote=$(git config --get "branch.$bridgeBranch.remote") || bridgeConfiguredRemote=""',
+        '  bridgeConfiguredMerge=$(git config --get "branch.$bridgeBranch.merge") || bridgeConfiguredMerge=""',
+        '  bridgeRemoteRef="refs/remotes/origin/$bridgeBranch"',
+        "  [ -z \"$bridgeConfiguredRemote\" ] || [ \"$bridgeConfiguredRemote\" = origin ] || { printf '%s\\n' 'This branch has a different upstream remote. It has been preserved.' >&2; exit 1; }",
+        "  [ -z \"$bridgeConfiguredMerge\" ] || [ \"$bridgeConfiguredMerge\" = \"refs/heads/$bridgeBranch\" ] || { printf '%s\\n' 'This branch tracks a different branch. Its upstream has been preserved.' >&2; exit 1; }",
         "  [ -f \"$bridgeZip\" ] || { printf 'Download the expected ZIP from Talk first: %s\\n' \"$bridgeZip\" >&2; exit 1; }",
         '  bridgeDirty=$(git status --porcelain)',
         "  [ -z \"$bridgeDirty\" ] || { printf '%s\\n' 'Commit or stash your local changes before importing.' >&2; exit 1; }",
         '  bridgeTmp=$(mktemp -d "${TMPDIR:-/tmp}/kidzy-git-bridge.XXXXXX")',
         '  unzip -q "$bridgeZip" -d "$bridgeTmp"',
+        '  bridgeOriginFile="$bridgeTmp/bridge-origin.txt"',
+        "  [ -f \"$bridgeOriginFile\" ] || { printf '%s\\n' 'This ZIP has no GitLab snapshot identity. Generate a new ZIP with the updated VDI export command.' >&2; exit 1; }",
+        '  bridgeArchiveOrigin=$(cat "$bridgeOriginFile")',
+        '  bridgeArchiveOrigin="${bridgeArchiveOrigin%/}"',
+        "  [ \"${bridgeArchiveOrigin%.git}\" = \"${bridgeExpectedOrigin%.git}\" ] || { printf '%s\\n' 'The ZIP belongs to another GitLab project. No references were changed.' >&2; exit 1; }",
         `  bridgeBundle="$bridgeTmp/"${shQuote(bundleName)}`,
         '  git bundle verify "$bridgeBundle"',
-        '  git fetch "$bridgeBundle" "$bridgeBranch"',
+        '  git fetch --no-tags "$bridgeBundle" "$bridgeRemoteRef"',
+        '  bridgeIncoming=$(git rev-parse --verify "FETCH_HEAD^{commit}")',
+        '  bridgeOldRemote=$(git rev-parse --verify "$bridgeRemoteRef" 2>/dev/null) || bridgeOldRemote=""',
+        '  if [ -n "$bridgeOldRemote" ]; then',
+        "    git merge-base --is-ancestor \"$bridgeOldRemote\" \"$bridgeIncoming\" || { printf '%s\\n' 'The GitLab snapshot is older or divergent. Existing origin tracking was preserved; export a fresh snapshot or resolve the rewrite manually.' >&2; exit 1; }",
+        '  fi',
         '  if git show-ref --verify --quiet "refs/heads/$bridgeBranch"; then',
         '    git checkout "$bridgeBranch"',
-        '    git merge --ff-only FETCH_HEAD',
+        '    git merge --ff-only "$bridgeIncoming"',
         '  else',
-        '    git checkout -b "$bridgeBranch" FETCH_HEAD',
+        '    git checkout -b "$bridgeBranch" "$bridgeIncoming"',
         '  fi',
+        '  if [ -n "$bridgeOldRemote" ]; then',
+        '    git update-ref -m "Git Bridge: imported GitLab snapshot" "$bridgeRemoteRef" "$bridgeIncoming" "$bridgeOldRemote"',
+        '  else',
+        '    git update-ref -m "Git Bridge: imported GitLab snapshot" "$bridgeRemoteRef" "$bridgeIncoming" ""',
+        '  fi',
+        '  git branch --set-upstream-to="origin/$bridgeBranch" "$bridgeBranch"',
         '  rm -rf "$bridgeTmp"',
         '  rm -f "$bridgeZip"',
-        '  printf "Successfully imported %s on your Mac.\\n" "$bridgeBranch"',
+        '  printf "Imported %s and updated origin/%s to the transferred GitLab snapshot.\\n" "$bridgeBranch" "$bridgeBranch"',
         ')'
       ]).join('\n');
     }
 
-    function windowsHostCommand(mode, branch, bundleName, zipName) {
+    function windowsHostCommand(mode, branch, bundleName, zipName, originUrl = projects[currentProject].cloneUrl) {
       const psQuote = value => "'" + value.replace(/'/g, "''") + "'";
       const setup = [
         '& {',
@@ -458,32 +484,108 @@
         ]).join('\n');
       }
       return setup.concat([
+        `  $bridgeExpectedOrigin = ${psQuote(originUrl)}`,
+        '  $bridgeOrigin = git remote get-url origin',
+        "  if ($LASTEXITCODE -ne 0) { throw 'This repository has no origin remote.' }",
+        "  if (($bridgeOrigin.Trim().TrimEnd('/') -replace '\\.git$', '') -cne ($bridgeExpectedOrigin.TrimEnd('/') -replace '\\.git$', '')) { throw 'origin does not match the selected GitLab project. No references were changed.' }",
+        '  $bridgeRemoteRef = "refs/remotes/origin/$bridgeBranch"',
+        '  $bridgeConfiguredRemote = git config --get "branch.$bridgeBranch.remote"',
+        "  if ($LASTEXITCODE -gt 1) { throw 'Cannot read upstream configuration.' }",
+        '  $bridgeConfiguredMerge = git config --get "branch.$bridgeBranch.merge"',
+        "  if ($LASTEXITCODE -gt 1) { throw 'Cannot read upstream configuration.' }",
+        "  if ($bridgeConfiguredRemote -and $bridgeConfiguredRemote -cne 'origin') { throw 'This branch has a different upstream remote. It has been preserved.' }",
+        "  if ($bridgeConfiguredMerge -and $bridgeConfiguredMerge -cne \"refs/heads/$bridgeBranch\") { throw 'This branch tracks a different branch. Its upstream has been preserved.' }",
         "  if (-not (Test-Path -LiteralPath $bridgeZip -PathType Leaf)) { throw ('Download the expected ZIP from Talk first: ' + $bridgeZip) }",
         '  $bridgeDirty = git status --porcelain',
         "  if ($LASTEXITCODE -ne 0) { throw 'Cannot check the working tree.' }",
         "  if ($bridgeDirty) { throw 'Commit or stash your local changes before importing.' }",
         "  $bridgeTmp = Join-Path ([System.IO.Path]::GetTempPath()) ('kidzy-git-bridge-' + [guid]::NewGuid().ToString())",
         '  Expand-Archive -LiteralPath $bridgeZip -DestinationPath $bridgeTmp',
+        "  $bridgeOriginFile = Join-Path $bridgeTmp 'bridge-origin.txt'",
+        "  if (-not (Test-Path -LiteralPath $bridgeOriginFile -PathType Leaf)) { throw 'This ZIP has no GitLab snapshot identity. Generate a new ZIP with the updated VDI export command.' }",
+        '  $bridgeArchiveOrigin = [System.IO.File]::ReadAllText($bridgeOriginFile).Trim()',
+        "  if (($bridgeArchiveOrigin.TrimEnd('/') -replace '\\.git$', '') -cne ($bridgeExpectedOrigin.TrimEnd('/') -replace '\\.git$', '')) { throw 'The ZIP belongs to another GitLab project. No references were changed.' }",
         `  $bridgeBundle = Join-Path $bridgeTmp ${psQuote(bundleName)}`,
         '  git bundle verify $bridgeBundle',
-        "  if ($LASTEXITCODE -ne 0) { throw 'Bundle verification failed. ZIP and extracted files have been kept.' }",
-        '  git fetch $bridgeBundle $bridgeBranch',
-        "  if ($LASTEXITCODE -ne 0) { throw 'Bundle fetch failed. ZIP and extracted files have been kept.' }",
+        "  if ($LASTEXITCODE -ne 0) { throw 'Bundle verification failed. Transfer files have been kept.' }",
+        '  git fetch --no-tags $bridgeBundle $bridgeRemoteRef',
+        "  if ($LASTEXITCODE -ne 0) { throw 'The bundle has no matching GitLab remote snapshot. Generate a new ZIP in VDI.' }",
+        '  $bridgeIncoming = git rev-parse --verify "FETCH_HEAD^{commit}"',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Cannot identify the incoming commit.' }",
+        '  git show-ref --verify --quiet $bridgeRemoteRef',
+        '  if ($LASTEXITCODE -eq 0) {',
+        '    $bridgeOldRemote = git rev-parse --verify $bridgeRemoteRef',
+        "    if ($LASTEXITCODE -ne 0) { throw 'Cannot read origin tracking.' }",
+        '    git merge-base --is-ancestor $bridgeOldRemote $bridgeIncoming',
+        "    if ($LASTEXITCODE -ne 0) { throw 'The GitLab snapshot is older or divergent. Existing origin tracking was preserved; export a fresh snapshot or resolve the rewrite manually.' }",
+        '  } else { $bridgeOldRemote = $null }',
         '  git show-ref --verify --quiet "refs/heads/$bridgeBranch"',
         '  if ($LASTEXITCODE -eq 0) {',
         '    git checkout $bridgeBranch',
         "    if ($LASTEXITCODE -ne 0) { throw 'Cannot check out the branch. Transfer files have been kept.' }",
-        '    git merge --ff-only FETCH_HEAD',
+        '    git merge --ff-only $bridgeIncoming',
         "    if ($LASTEXITCODE -ne 0) { throw 'Branch histories diverge. Resolve locally; transfer files have been kept.' }",
         '  } else {',
-        '    git checkout -b $bridgeBranch FETCH_HEAD',
+        '    git checkout -b $bridgeBranch $bridgeIncoming',
         "    if ($LASTEXITCODE -ne 0) { throw 'Cannot create the branch. Transfer files have been kept.' }",
         '  }',
+        '  if ($bridgeOldRemote) {',
+        '    git update-ref -m "Git Bridge: imported GitLab snapshot" $bridgeRemoteRef $bridgeIncoming $bridgeOldRemote',
+        '  } else {',
+        '    $bridgeZero = "0" * $bridgeIncoming.Length',
+        '    git update-ref -m "Git Bridge: imported GitLab snapshot" $bridgeRemoteRef $bridgeIncoming $bridgeZero',
+        '  }',
+        "  if ($LASTEXITCODE -ne 0) { throw 'origin tracking changed concurrently. Transfer files have been kept.' }",
+        '  git branch --set-upstream-to="origin/$bridgeBranch" $bridgeBranch',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Cannot configure upstream tracking. Transfer files have been kept.' }",
         '  Remove-Item -LiteralPath $bridgeTmp -Recurse -Force',
         '  Remove-Item -LiteralPath $bridgeZip -Force',
-        '  Write-Host "Successfully imported $bridgeBranch on your Windows computer." -ForegroundColor Green',
+        '  Write-Host "Imported $bridgeBranch and updated origin/$bridgeBranch to the transferred GitLab snapshot." -ForegroundColor Green',
         '}'
       ]).join('\n');
+    }
+
+    function vdiSnapshotCommand(proj, username, branch, bundleName, zipName) {
+      const psQuote = value => "'" + value.replace(/'/g, "''") + "'";
+      return [
+        '& {',
+        "  $ErrorActionPreference = 'Stop'",
+        `  $bridgeRepo = ${psQuote('C:\\Users\\' + username + '\\' + proj.folder)}`,
+        `  $bridgeDownloads = ${psQuote('C:\\Users\\' + username + '\\Downloads')}`,
+        `  $bridgeExpectedOrigin = ${psQuote(proj.cloneUrl)}`,
+        `  $bridgeBranch = ${psQuote(branch)}`,
+        '  $bridgeRemoteRef = "refs/remotes/origin/$bridgeBranch"',
+        '  if (-not (Test-Path -LiteralPath $bridgeRepo)) {',
+        '    git -c credential.protectUnencryptedRemotes=false clone $bridgeExpectedOrigin $bridgeRepo',
+        "    if ($LASTEXITCODE -ne 0) { throw 'GitLab clone failed.' }",
+        '  }',
+        '  Set-Location -LiteralPath $bridgeRepo',
+        '  $bridgeOrigin = git remote get-url origin',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Cannot read origin.' }",
+        "  if (($bridgeOrigin.Trim().TrimEnd('/') -replace '\\.git$', '') -cne ($bridgeExpectedOrigin.TrimEnd('/') -replace '\\.git$', '')) { throw 'VDI origin does not match the selected GitLab project.' }",
+        '  $bridgeShallow = git rev-parse --is-shallow-repository',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect repository history.' }",
+        "  if ($bridgeShallow -eq 'true') {",
+        '    git -c credential.protectUnencryptedRemotes=false fetch --unshallow origin',
+        "    if ($LASTEXITCODE -ne 0) { throw 'Cannot retrieve full GitLab history.' }",
+        '  }',
+        '  git -c credential.protectUnencryptedRemotes=false fetch --no-tags origin "+refs/heads/${bridgeBranch}:${bridgeRemoteRef}"',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Cannot fetch the selected GitLab branch. No new ZIP was created.' }",
+        "  $bridgeTmp = Join-Path ([System.IO.Path]::GetTempPath()) ('kidzy-git-bridge-' + [guid]::NewGuid().ToString())",
+        '  New-Item -ItemType Directory -Path $bridgeTmp | Out-Null',
+        `  $bridgeBundle = Join-Path $bridgeTmp ${psQuote(bundleName)}`,
+        '  git bundle create $bridgeBundle $bridgeRemoteRef',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Bundle creation failed. No new ZIP was created.' }",
+        "  $bridgeOriginFile = Join-Path $bridgeTmp 'bridge-origin.txt'",
+        '  [System.IO.File]::WriteAllText($bridgeOriginFile, $bridgeExpectedOrigin)',
+        "  $bridgeStagedZip = Join-Path $bridgeTmp 'transfer.zip'",
+        '  Compress-Archive -LiteralPath @($bridgeBundle, $bridgeOriginFile) -DestinationPath $bridgeStagedZip',
+        `  $bridgeZip = Join-Path $bridgeDownloads ${psQuote(zipName)}`,
+        '  Move-Item -LiteralPath $bridgeStagedZip -Destination $bridgeZip -Force',
+        '  Remove-Item -LiteralPath $bridgeTmp -Recurse -Force',
+        '  Write-Host "GitLab snapshot saved to $bridgeZip - Transfer this ZIP through Talk." -ForegroundColor Green',
+        '}'
+      ].join('\n');
     }
 
     function generate() {
@@ -503,7 +605,6 @@
       document.getElementById('vdiUsernameLabel').textContent = username;
       const vdiUsername = username.replace(/[`"$]/g, '`$&');
       const branch = branchNameInput.value.trim() || 'fix/general-hotfix';
-      const branchRefPS = "'" + ('refs/heads/' + branch).replace(/'/g, "''") + "'";
       const sanitized = sanitizeBranch(branch);
       const bundleName = `${sanitized}.bundle`;
       const zipName = `${sanitized}.zip`;
@@ -541,26 +642,26 @@
 
       } else {
         // PULL MODE UI LABELS (VDI -> Talk -> Mac)
-        step1Title.innerHTML = `In VDI PowerShell &mdash; Pull from GitLab &amp; Zip Bundle`;
-        step1Subtitle.textContent = `Run inside VDI PowerShell to pull latest changes from GitLab and export a zip`;
+        step1Title.innerHTML = `In VDI PowerShell &mdash; Export GitLab Snapshot`;
+        step1Subtitle.textContent = `Fetches the selected GitLab branch and exports its complete history with project identity`;
         step1BtnText.textContent = `Copy VDI Export Command`;
         step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and download it on your Mac.`;
 
         step2Title.textContent = `On Your Mac Terminal`;
-        step2Subtitle.textContent = `Run inside your local project repository. Requires a clean working tree; fast-forwards the branch and keeps transfer files if a step fails.`;
+        step2Subtitle.textContent = `Run inside your local project repository. Requires matching origin and a clean working tree. Fast-forwards the branch, updates origin tracking, and keeps transfer files on failure.`;
         step2Badge1.textContent = `Auto-Unzip Included`;
-        step2Badge2.textContent = `Auto-Checkout`;
+        step2Badge2.textContent = `Syncs origin tracking`;
         step2Badge2.style.display = 'inline-block';
         step2BtnText.textContent = `Copy Mac Pull Command`;
 
         pipeStep1.textContent = "Unzips the expected ZIP in Downloads";
-        pipeStep2.textContent = "Verifies the complete branch bundle";
+        pipeStep2.textContent = "Verifies bundle and GitLab identity";
         pipeStep3.textContent = "Fetches branch from bundle";
-        pipeStep4.textContent = "Checks out / fast-forwards branch";
+        pipeStep4.textContent = "Fast-forwards + syncs origin tracking";
         pipeStep5.textContent = "Cleans up only after success";
 
         // STEP 1 (VDI: PULL LATEST GITLAB & BUNDLE TO ZIP)
-        const vdiExportCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch origin; git checkout ${branch} 2>$null; if ($LASTEXITCODE -ne 0) { git checkout -b ${branch} origin/${branch} } else { git pull origin ${branch} }; $bundle = "C:\\Users\\${vdiUsername}\\Downloads\\${bundleName}"; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (Test-Path $bundle) { Remove-Item $bundle -Force }; if (Test-Path $zip) { Remove-Item $zip -Force }; git bundle create $bundle ${branchRefPS}; if ($LASTEXITCODE -ne 0) { throw 'Bundle creation failed. No new ZIP was created.' }; Compress-Archive -Path $bundle -DestinationPath $zip -Force; Remove-Item $bundle -Force; Write-Host "✔ Saved to $zip - Send this file to Talk!" -ForegroundColor Green`;
+        const vdiExportCommand = vdiSnapshotCommand(proj, username, branch, bundleName, zipName);
         step1Code.textContent = vdiExportCommand;
 
         // STEP 2 (MAC: AUTO-UNZIP, FETCH & CHECKOUT BRANCH)
@@ -575,7 +676,7 @@
         } else {
           step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and download it on your Windows computer.`;
           step2Title.textContent = 'On Your Windows Computer — PowerShell';
-          step2Subtitle.textContent = 'Run inside your local project repository. Requires a clean working tree; fast-forwards the branch and keeps transfer files if a step fails.';
+          step2Subtitle.textContent = 'Run inside your local project repository. Requires matching origin and a clean working tree. Fast-forwards the branch, updates origin tracking, and keeps transfer files on failure.';
           step2BtnText.textContent = 'Copy Windows Pull Command';
           pipeStep1.textContent = 'Unzips the expected ZIP in Downloads';
           step2Code.textContent = windowsHostCommand('pull', branch, bundleName, zipName);
