@@ -29,6 +29,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    .host-os-button {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 9px 12px; border: 1px solid transparent; border-radius: 8px;
+      color: #94a3b8; font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: background-color 150ms, color 150ms, border-color 150ms;
+    }
+    .host-os-button span { width: 10px; }
+    .host-os-button:hover { background: #1e293b; color: #fff; }
+    .host-os-button.host-os-selected { background: #4f46e5; border-color: #818cf8; color: #fff; }
+    .host-os-button:focus-visible { outline: 2px solid #c7d2fe; outline-offset: 2px; }
+
     .base-preset {
       display: inline-flex;
       align-items: center;
@@ -68,7 +79,7 @@
 
   <!-- Header -->
   <header class="border-b border-slate-800/80 bg-[#0e1626]/90 backdrop-blur sticky top-0 z-30 px-4 sm:px-6 py-3.5">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
         <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/25">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,7 +91,7 @@
             Kidzy VDI Git Bridge
             <span id="headerBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Auto-Unzip &amp; Push</span>
           </h1>
-          <p class="text-xs text-slate-400 hidden sm:block">Automated air-gapped commit transport between Mac &amp; Windows Horizon VDI</p>
+          <p id="environmentDescription" class="text-xs text-slate-400 hidden sm:block">Automated air-gapped commit transport between Mac &amp; Windows Horizon VDI</p>
         </div>
       </div>
 
@@ -131,10 +142,20 @@
         </div>
       </div>
 
-      <div class="space-y-1">
-        <label class="block text-xs font-semibold text-slate-300" for="vdiUsername">VDI Username</label>
-        <input type="text" id="vdiUsername" value="m.sakha" placeholder="m.sakha" spellcheck="false" autocomplete="off"
-          class="w-full sm:w-64 px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 outline-none transition">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+        <div class="space-y-1.5">
+          <p id="hostOSLabel" class="text-xs font-semibold text-slate-300">Your computer</p>
+          <div class="inline-flex flex-wrap gap-1.5 rounded-xl bg-[#0b1220] border border-slate-800 p-1" role="group" aria-labelledby="hostOSLabel">
+            <button type="button" id="hostMacOS" onclick="setHostOS('macos')" aria-pressed="true" class="host-os-button host-os-selected"><span aria-hidden="true">✓</span> macOS · Terminal</button>
+            <button type="button" id="hostWindows" onclick="setHostOS('windows')" aria-pressed="false" class="host-os-button"><span aria-hidden="true"></span> Windows · PowerShell</button>
+          </div>
+          <p class="text-[10px] text-slate-400">Choose your development computer. VDI always uses Windows PowerShell.</p>
+        </div>
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-300" for="vdiUsername">VDI Username</label>
+          <input type="text" id="vdiUsername" value="m.sakha" placeholder="m.sakha" spellcheck="false" autocomplete="off"
+            class="w-full sm:w-64 px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 outline-none transition">
+        </div>
       </div>
 
       <!-- Branch Inputs Grid -->
@@ -268,6 +289,7 @@
   <script>
     // State
     let currentProject = 'vidzy'; // Selected project key
+    let currentHostOS = 'macos'; // Explicit default; users can select Windows
     let currentMode = 'push';      // 'push' or 'pull'
 
     const projects = {
@@ -371,12 +393,80 @@
       generate();
     }
 
+    function setHostOS(os) {
+      if (os !== 'macos' && os !== 'windows') return;
+      currentHostOS = os;
+      generate();
+    }
+
+    function windowsHostCommand(mode, branch, base, bundleName, zipName) {
+      const psQuote = value => "'" + value.replace(/'/g, "''") + "'";
+      const setup = [
+        '& {',
+        "  $ErrorActionPreference = 'Stop'",
+        '  git rev-parse --show-toplevel | Out-Null',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Open PowerShell inside your local project repository first.' }",
+        "  $bridgeDownloads = Join-Path $env:USERPROFILE 'Downloads'",
+        `  $bridgeBranch = ${psQuote(branch)}`,
+        `  $bridgeZip = Join-Path $bridgeDownloads ${psQuote(zipName)}`
+      ];
+      if (mode === 'push') {
+        return setup.concat([
+          `  $bridgeBundle = Join-Path $bridgeDownloads ${psQuote(bundleName)}`,
+          `  git bundle create $bridgeBundle ${psQuote(base + '..' + branch)}`,
+          "  if ($LASTEXITCODE -ne 0) { throw 'Bundle creation failed. Check your base and working branch.' }",
+          '  Compress-Archive -LiteralPath $bridgeBundle -DestinationPath $bridgeZip -Force',
+          '  Remove-Item -LiteralPath $bridgeBundle -Force',
+          '  Write-Host "Saved to $bridgeZip - Send this ZIP through Talk and download it in VDI." -ForegroundColor Green',
+          '}'
+        ]).join('\n');
+      }
+      return setup.concat([
+        "  if (-not (Test-Path -LiteralPath $bridgeZip -PathType Leaf)) { throw ('Download the expected ZIP from Talk first: ' + $bridgeZip) }",
+        '  $bridgeDirty = git status --porcelain',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Cannot check the working tree.' }",
+        "  if ($bridgeDirty) { throw 'Commit or stash your local changes before importing.' }",
+        "  $bridgeTmp = Join-Path ([System.IO.Path]::GetTempPath()) ('kidzy-git-bridge-' + [guid]::NewGuid().ToString())",
+        '  Expand-Archive -LiteralPath $bridgeZip -DestinationPath $bridgeTmp',
+        `  $bridgeBundle = Join-Path $bridgeTmp ${psQuote(bundleName)}`,
+        '  git bundle verify $bridgeBundle',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Bundle verification failed. ZIP and extracted files have been kept.' }",
+        '  git fetch $bridgeBundle $bridgeBranch',
+        "  if ($LASTEXITCODE -ne 0) { throw 'Bundle fetch failed. ZIP and extracted files have been kept.' }",
+        '  git show-ref --verify --quiet "refs/heads/$bridgeBranch"',
+        '  if ($LASTEXITCODE -eq 0) {',
+        '    git checkout $bridgeBranch',
+        "    if ($LASTEXITCODE -ne 0) { throw 'Cannot check out the branch. Transfer files have been kept.' }",
+        '    git merge --ff-only FETCH_HEAD',
+        "    if ($LASTEXITCODE -ne 0) { throw 'Branch histories diverge. Resolve locally; transfer files have been kept.' }",
+        '  } else {',
+        '    git checkout -b $bridgeBranch FETCH_HEAD',
+        "    if ($LASTEXITCODE -ne 0) { throw 'Cannot create the branch. Transfer files have been kept.' }",
+        '  }',
+        '  Remove-Item -LiteralPath $bridgeTmp -Recurse -Force',
+        '  Remove-Item -LiteralPath $bridgeZip -Force',
+        '  Write-Host "Successfully imported $bridgeBranch on your Windows computer." -ForegroundColor Green',
+        '}'
+      ]).join('\n');
+    }
+
     function setBase(val) {
       baseBranchInput.value = val;
       generate();
     }
 
     function generate() {
+      const windowsHost = currentHostOS === 'windows';
+      const hostLabel = windowsHost ? 'Windows' : 'Mac';
+      [['hostMacOS', !windowsHost], ['hostWindows', windowsHost]].forEach(([id, selected]) => {
+        const button = document.getElementById(id);
+        button.setAttribute('aria-pressed', String(selected));
+        button.className = 'host-os-button' + (selected ? ' host-os-selected' : '');
+        button.querySelector('span').textContent = selected ? '✓' : '';
+      });
+      btnModePush.querySelector('span').textContent = `Push (${hostLabel} → VDI)`;
+      btnModePull.querySelector('span').textContent = `Pull (VDI → ${hostLabel})`;
+      document.getElementById('environmentDescription').textContent = `Automated air-gapped commit transport between ${hostLabel} & Windows Horizon VDI`;
       const proj = projects[currentProject];
       const username = vdiUsernameInput.value.trim() || 'm.sakha';
       document.getElementById('vdiUsernameLabel').textContent = username;
@@ -467,6 +557,21 @@ git checkout "${branch}"
 rm -rf "$TMP" "$ZIP"
 echo "✔ Successfully updated and checked out ${branch} on your Mac!"`;
         step2Code.textContent = macImportCommand;
+      }
+      if (windowsHost) {
+        if (currentMode === 'push') {
+          step1Title.textContent = 'On Your Windows Computer — Package Bundle & Zip';
+          step1Subtitle.textContent = 'Run in Windows PowerShell inside your local project repository. Git must be installed.';
+          step1BtnText.textContent = 'Copy Windows Command';
+          step1Code.textContent = windowsHostCommand('push', branch, base, bundleName, zipName);
+        } else {
+          step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and download it on your Windows computer.`;
+          step2Title.textContent = 'On Your Windows Computer — PowerShell';
+          step2Subtitle.textContent = 'Run inside your local project repository. Imports the bundle and fast-forwards the branch; keeps transfer files if a step fails.';
+          step2BtnText.textContent = 'Copy Windows Pull Command';
+          pipeStep1.textContent = 'Unzips the expected ZIP in Downloads';
+          step2Code.textContent = windowsHostCommand('pull', branch, base, bundleName, zipName);
+        }
       }
     }
 
