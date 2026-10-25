@@ -60,25 +60,6 @@
     .host-os-button.host-os-selected { background: #4f46e5; border-color: #818cf8; color: #fff; }
     .host-os-button:focus-visible { outline: 2px solid #c7d2fe; outline-offset: 2px; }
 
-    .base-preset {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      flex-shrink: 0;
-      padding: 8px 9px;
-      border-width: 1px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 150ms, border-color 150ms, box-shadow 150ms;
-    }
-    .base-preset:focus-visible {
-      outline: 2px solid #c7d2fe;
-      outline-offset: 3px;
-    }
-    .base-preset-check { width: 10px; }
-
     pre::-webkit-scrollbar {
       height: 6px;
       width: 6px;
@@ -182,7 +163,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 text-xs">
         
         <!-- Active Branch -->
-        <div class="lg:col-span-6 space-y-1">
+        <div class="lg:col-span-8 space-y-1">
           <label for="branchName" class="block font-semibold text-slate-300">
             Active Working Branch <span class="text-red-400">*</span>
           </label>
@@ -192,28 +173,14 @@
           <p class="text-[10px] text-slate-400">Auto-sanitizes slashes for the archive filename.</p>
         </div>
 
-        <!-- Base Branch Target -->
-        <div class="lg:col-span-3 space-y-1">
-          <label for="baseBranch" class="block font-semibold text-slate-300">
-            Base / Target Branch <span class="text-red-400">*</span>
-          </label>
-          <div class="flex gap-1.5">
-            <input type="text" id="baseBranch" value="master" 
-              class="w-full min-w-0 px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 outline-none transition">
-            <button type="button" id="basePresetMaster" onclick="setBase('master')" aria-label="master" aria-pressed="true" class="base-preset bg-indigo-600 text-white border-indigo-400 ring-2 ring-indigo-400/30 shadow-sm"><span class="base-preset-check" aria-hidden="true">✓</span>master</button>
-            <button type="button" id="basePresetDevelop" onclick="setBase('develop')" aria-label="develop" aria-pressed="false" class="base-preset bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700"><span class="base-preset-check" aria-hidden="true"></span>develop</button>
-          </div>
-          <p class="text-[10px] text-slate-400">Branch to calculate diff against.</p>
-        </div>
-
         <!-- Generated Archive Name Display -->
-        <div class="lg:col-span-3 space-y-1">
+        <div class="lg:col-span-4 space-y-1">
           <label class="block font-semibold text-slate-300">Generated Archive File</label>
           <div class="px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-800 text-emerald-400 font-mono text-xs truncate flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
             <span id="archiveNamePreview">fix-general-hotfix.zip</span>
           </div>
-          <p class="text-[10px] text-slate-400" id="archiveHintText">File uploaded into Talk Messenger.</p>
+          <p class="text-[10px] text-slate-400" id="archiveHintText">Full branch history included. ZIP files may be larger.</p>
         </div>
       </div>
     </section>
@@ -346,7 +313,6 @@
     // DOM Elements
     const vdiUsernameInput = document.getElementById('vdiUsername');
     const branchNameInput = document.getElementById('branchName');
-    const baseBranchInput = document.getElementById('baseBranch');
     const step1Code = document.getElementById('step1Code');
     const step2Code = document.getElementById('step2Code');
     const archiveNamePreview = document.getElementById('archiveNamePreview');
@@ -419,7 +385,7 @@
       generate();
     }
 
-    function macHostCommand(mode, branch, base, bundleName, zipName) {
+    function macHostCommand(mode, branch, bundleName, zipName) {
       const shQuote = value => "'" + value.replace(/'/g, "'\\''") + "'";
       const setup = [
         '(',
@@ -432,7 +398,7 @@
       if (mode === 'push') {
         return setup.concat([
           `  bridgeBundle="$bridgeDownloads/"${shQuote(bundleName)}`,
-          `  git bundle create "$bridgeBundle" ${shQuote(base + '..' + branch)}`,
+          `  git bundle create "$bridgeBundle" ${shQuote('refs/heads/' + branch)}`,
           '  bridgeTmp=$(mktemp -d "${TMPDIR:-/tmp}/kidzy-git-bridge.XXXXXX")',
           '  zip -q -j "$bridgeTmp/transfer.zip" "$bridgeBundle"',
           '  mv -f "$bridgeTmp/transfer.zip" "$bridgeZip"',
@@ -464,7 +430,7 @@
       ]).join('\n');
     }
 
-    function windowsHostCommand(mode, branch, base, bundleName, zipName) {
+    function windowsHostCommand(mode, branch, bundleName, zipName) {
       const psQuote = value => "'" + value.replace(/'/g, "''") + "'";
       const setup = [
         '& {',
@@ -478,8 +444,8 @@
       if (mode === 'push') {
         return setup.concat([
           `  $bridgeBundle = Join-Path $bridgeDownloads ${psQuote(bundleName)}`,
-          `  git bundle create $bridgeBundle ${psQuote(base + '..' + branch)}`,
-          "  if ($LASTEXITCODE -ne 0) { throw 'Bundle creation failed. Check your base and working branch.' }",
+          `  git bundle create $bridgeBundle ${psQuote('refs/heads/' + branch)}`,
+          "  if ($LASTEXITCODE -ne 0) { throw 'Bundle creation failed. Check the selected branch and its commit history.' }",
           "  $bridgeTmp = Join-Path ([System.IO.Path]::GetTempPath()) ('kidzy-git-bridge-' + [guid]::NewGuid().ToString())",
           '  New-Item -ItemType Directory -Path $bridgeTmp | Out-Null',
           "  $bridgeStagedZip = Join-Path $bridgeTmp 'transfer.zip'",
@@ -520,11 +486,6 @@
       ]).join('\n');
     }
 
-    function setBase(val) {
-      baseBranchInput.value = val;
-      generate();
-    }
-
     function generate() {
       const windowsHost = currentHostOS === 'windows';
       const hostLabel = windowsHost ? 'Windows' : 'Mac';
@@ -542,16 +503,7 @@
       document.getElementById('vdiUsernameLabel').textContent = username;
       const vdiUsername = username.replace(/[`"$]/g, '`$&');
       const branch = branchNameInput.value.trim() || 'fix/general-hotfix';
-      const base = baseBranchInput.value.trim() || 'master';
-      ['master', 'develop'].forEach(preset => {
-        const button = document.getElementById('basePreset' + preset[0].toUpperCase() + preset.slice(1));
-        const selected = base === preset;
-        button.setAttribute('aria-pressed', String(selected));
-        button.className = 'base-preset ' + (selected
-          ? 'bg-indigo-600 text-white border-indigo-400 ring-2 ring-indigo-400/30 shadow-sm'
-          : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700');
-        button.querySelector('.base-preset-check').textContent = selected ? '✓' : '';
-      });
+      const branchRefPS = "'" + ('refs/heads/' + branch).replace(/'/g, "''") + "'";
       const sanitized = sanitizeBranch(branch);
       const bundleName = `${sanitized}.bundle`;
       const zipName = `${sanitized}.zip`;
@@ -581,7 +533,7 @@
         pipeStep5.textContent = "Cleans up temp files";
 
         // STEP 1 (MAC: EXPORT BUNDLE & ZIP)
-        step1Code.textContent = macHostCommand('push', branch, base, bundleName, zipName);
+        step1Code.textContent = macHostCommand('push', branch, bundleName, zipName);
 
         // STEP 2 (VDI: AUTO-UNZIP, CLONE IF MISSING, FETCH, PUSH & CLEANUP)
         const vdiCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (-not (Test-Path $zip)) { $zip = (Get-ChildItem "C:\\Users\\${vdiUsername}\\Downloads" -Filter "*.zip" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName }; $tmp = "C:\\Users\\${vdiUsername}\\Downloads\\_bundle_tmp"; if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }; Expand-Archive -Path $zip -DestinationPath $tmp -Force; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch "$tmp\\${bundleName}" ${branch}:${branch}; git push origin ${branch}; Remove-Item $tmp -Recurse -Force; Remove-Item $zip -Force; Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" -ForegroundColor Green`;
@@ -602,31 +554,31 @@
         step2BtnText.textContent = `Copy Mac Pull Command`;
 
         pipeStep1.textContent = "Unzips the expected ZIP in Downloads";
-        pipeStep2.textContent = "Verifies bundle and shared history";
+        pipeStep2.textContent = "Verifies the complete branch bundle";
         pipeStep3.textContent = "Fetches branch from bundle";
         pipeStep4.textContent = "Checks out / fast-forwards branch";
         pipeStep5.textContent = "Cleans up only after success";
 
         // STEP 1 (VDI: PULL LATEST GITLAB & BUNDLE TO ZIP)
-        const vdiExportCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch origin; git checkout ${branch} 2>$null; if ($LASTEXITCODE -ne 0) { git checkout -b ${branch} origin/${branch} } else { git pull origin ${branch} }; $bundle = "C:\\Users\\${vdiUsername}\\Downloads\\${bundleName}"; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (Test-Path $bundle) { Remove-Item $bundle -Force }; if (Test-Path $zip) { Remove-Item $zip -Force }; git bundle create $bundle ${base}..${branch}; Compress-Archive -Path $bundle -DestinationPath $zip -Force; Remove-Item $bundle -Force; Write-Host "✔ Saved to $zip - Send this file to Talk!" -ForegroundColor Green`;
+        const vdiExportCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch origin; git checkout ${branch} 2>$null; if ($LASTEXITCODE -ne 0) { git checkout -b ${branch} origin/${branch} } else { git pull origin ${branch} }; $bundle = "C:\\Users\\${vdiUsername}\\Downloads\\${bundleName}"; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (Test-Path $bundle) { Remove-Item $bundle -Force }; if (Test-Path $zip) { Remove-Item $zip -Force }; git bundle create $bundle ${branchRefPS}; if ($LASTEXITCODE -ne 0) { throw 'Bundle creation failed. No new ZIP was created.' }; Compress-Archive -Path $bundle -DestinationPath $zip -Force; Remove-Item $bundle -Force; Write-Host "✔ Saved to $zip - Send this file to Talk!" -ForegroundColor Green`;
         step1Code.textContent = vdiExportCommand;
 
         // STEP 2 (MAC: AUTO-UNZIP, FETCH & CHECKOUT BRANCH)
-        step2Code.textContent = macHostCommand('pull', branch, base, bundleName, zipName);
+        step2Code.textContent = macHostCommand('pull', branch, bundleName, zipName);
       }
       if (windowsHost) {
         if (currentMode === 'push') {
           step1Title.textContent = 'On Your Windows Computer — Package Bundle & Zip';
           step1Subtitle.textContent = 'Run in Windows PowerShell inside your local project repository. Git must be installed.';
           step1BtnText.textContent = 'Copy Windows Command';
-          step1Code.textContent = windowsHostCommand('push', branch, base, bundleName, zipName);
+          step1Code.textContent = windowsHostCommand('push', branch, bundleName, zipName);
         } else {
           step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and download it on your Windows computer.`;
           step2Title.textContent = 'On Your Windows Computer — PowerShell';
           step2Subtitle.textContent = 'Run inside your local project repository. Requires a clean working tree; fast-forwards the branch and keeps transfer files if a step fails.';
           step2BtnText.textContent = 'Copy Windows Pull Command';
           pipeStep1.textContent = 'Unzips the expected ZIP in Downloads';
-          step2Code.textContent = windowsHostCommand('pull', branch, base, bundleName, zipName);
+          step2Code.textContent = windowsHostCommand('pull', branch, bundleName, zipName);
         }
       }
     }
@@ -669,7 +621,6 @@
 
     vdiUsernameInput.addEventListener('input', generate);
     branchNameInput.addEventListener('input', generate);
-    baseBranchInput.addEventListener('input', generate);
 
     window.onload = function() {
       generate();
