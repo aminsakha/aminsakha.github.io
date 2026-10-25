@@ -4,26 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kidzy VDI Git Bridge</title>
-  <meta name="description" content="Move Git branches between Mac and Windows VDI using ZIP-packaged Git bundles. Generate Push and Pull commands for Kidzy projects.">
-  <meta name="theme-color" content="#4f46e5">
-  <link rel="canonical" href="https://aminsakha.me/kidzy-vdi-git-bridge/">
-  <link rel="icon" href="https://aminsakha.me/kidzy-vdi-git-bridge/favicon.svg" type="image/svg+xml">
-  <link rel="alternate icon" href="https://aminsakha.me/kidzy-vdi-git-bridge/favicon.ico" type="image/x-icon">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Kidzy Developer Tools">
-  <meta property="og:title" content="Kidzy VDI Git Bridge">
-  <meta property="og:description" content="Your commits. Across environments. Generate Mac and Windows VDI commands for ZIP-based Git bundle transfers.">
-  <meta property="og:url" content="https://aminsakha.me/kidzy-vdi-git-bridge/">
-  <meta property="og:image" content="https://aminsakha.me/kidzy-vdi-git-bridge/social-preview-v1.png">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Kidzy VDI Git Bridge — Mac to Windows VDI, Git bundles, ZIP transfer, Push and Pull.">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kidzy VDI Git Bridge">
-  <meta name="twitter:description" content="Your commits. Across environments. Git bundle transfers between Mac and Windows VDI.">
-  <meta name="twitter:image" content="https://aminsakha.me/kidzy-vdi-git-bridge/social-preview-v1.png">
-  <meta name="twitter:image:alt" content="Kidzy VDI Git Bridge with opposing arrows on an indigo icon.">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -49,6 +29,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    .base-preset {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-shrink: 0;
+      padding: 8px 9px;
+      border-width: 1px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 150ms, border-color 150ms, box-shadow 150ms;
+    }
+    .base-preset:focus-visible {
+      outline: 2px solid #c7d2fe;
+      outline-offset: 3px;
+    }
+    .base-preset-check { width: 10px; }
+
     pre::-webkit-scrollbar {
       height: 6px;
       width: 6px;
@@ -159,9 +158,9 @@
           </label>
           <div class="flex gap-1.5">
             <input type="text" id="baseBranch" value="master" 
-              class="w-full px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 outline-none transition">
-            <button type="button" onclick="setBase('master')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-medium">master</button>
-            <button type="button" onclick="setBase('develop')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-medium">develop</button>
+              class="w-full min-w-0 px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 outline-none transition">
+            <button type="button" id="basePresetMaster" onclick="setBase('master')" aria-label="master" aria-pressed="true" class="base-preset bg-indigo-600 text-white border-indigo-400 ring-2 ring-indigo-400/30 shadow-sm"><span class="base-preset-check" aria-hidden="true">✓</span>master</button>
+            <button type="button" id="basePresetDevelop" onclick="setBase('develop')" aria-label="develop" aria-pressed="false" class="base-preset bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700"><span class="base-preset-check" aria-hidden="true"></span>develop</button>
           </div>
           <p class="text-[10px] text-slate-400">Branch to calculate diff against.</p>
         </div>
@@ -384,6 +383,15 @@
       const vdiUsername = username.replace(/[`"$]/g, '`$&');
       const branch = branchNameInput.value.trim() || 'fix/general-hotfix';
       const base = baseBranchInput.value.trim() || 'master';
+      ['master', 'develop'].forEach(preset => {
+        const button = document.getElementById('basePreset' + preset[0].toUpperCase() + preset.slice(1));
+        const selected = base === preset;
+        button.setAttribute('aria-pressed', String(selected));
+        button.className = 'base-preset ' + (selected
+          ? 'bg-indigo-600 text-white border-indigo-400 ring-2 ring-indigo-400/30 shadow-sm'
+          : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700');
+        button.querySelector('.base-preset-check').textContent = selected ? '✓' : '';
+      });
       const sanitized = sanitizeBranch(branch);
       const bundleName = `${sanitized}.bundle`;
       const zipName = `${sanitized}.zip`;
