@@ -399,6 +399,51 @@
       generate();
     }
 
+    function macHostCommand(mode, branch, base, bundleName, zipName) {
+      const shQuote = value => "'" + value.replace(/'/g, "'\\''") + "'";
+      const setup = [
+        '(',
+        '  set -e',
+        "  git rev-parse --show-toplevel >/dev/null || { printf '%s\\n' 'Open Terminal inside your local project repository first.' >&2; exit 1; }",
+        '  bridgeDownloads="$HOME/Downloads"',
+        `  bridgeBranch=${shQuote(branch)}`,
+        `  bridgeZip="$bridgeDownloads/"${shQuote(zipName)}`
+      ];
+      if (mode === 'push') {
+        return setup.concat([
+          `  bridgeBundle="$bridgeDownloads/"${shQuote(bundleName)}`,
+          `  git bundle create "$bridgeBundle" ${shQuote(base + '..' + branch)}`,
+          '  bridgeTmp=$(mktemp -d "${TMPDIR:-/tmp}/kidzy-git-bridge.XXXXXX")',
+          '  zip -q -j "$bridgeTmp/transfer.zip" "$bridgeBundle"',
+          '  mv -f "$bridgeTmp/transfer.zip" "$bridgeZip"',
+          '  rm -f "$bridgeBundle"',
+          '  rm -rf "$bridgeTmp"',
+          '  printf "Saved to %s - Send this ZIP through Talk and download it in VDI.\\n" "$bridgeZip"',
+          ')'
+        ]).join('\n');
+      }
+      return setup.concat([
+        "  [ -f \"$bridgeZip\" ] || { printf 'Download the expected ZIP from Talk first: %s\\n' \"$bridgeZip\" >&2; exit 1; }",
+        '  bridgeDirty=$(git status --porcelain)',
+        "  [ -z \"$bridgeDirty\" ] || { printf '%s\\n' 'Commit or stash your local changes before importing.' >&2; exit 1; }",
+        '  bridgeTmp=$(mktemp -d "${TMPDIR:-/tmp}/kidzy-git-bridge.XXXXXX")',
+        '  unzip -q "$bridgeZip" -d "$bridgeTmp"',
+        `  bridgeBundle="$bridgeTmp/"${shQuote(bundleName)}`,
+        '  git bundle verify "$bridgeBundle"',
+        '  git fetch "$bridgeBundle" "$bridgeBranch"',
+        '  if git show-ref --verify --quiet "refs/heads/$bridgeBranch"; then',
+        '    git checkout "$bridgeBranch"',
+        '    git merge --ff-only FETCH_HEAD',
+        '  else',
+        '    git checkout -b "$bridgeBranch" FETCH_HEAD',
+        '  fi',
+        '  rm -rf "$bridgeTmp"',
+        '  rm -f "$bridgeZip"',
+        '  printf "Successfully imported %s on your Mac.\\n" "$bridgeBranch"',
+        ')'
+      ]).join('\n');
+    }
+
     function windowsHostCommand(mode, branch, base, bundleName, zipName) {
       const psQuote = value => "'" + value.replace(/'/g, "''") + "'";
       const setup = [
@@ -415,8 +460,13 @@
           `  $bridgeBundle = Join-Path $bridgeDownloads ${psQuote(bundleName)}`,
           `  git bundle create $bridgeBundle ${psQuote(base + '..' + branch)}`,
           "  if ($LASTEXITCODE -ne 0) { throw 'Bundle creation failed. Check your base and working branch.' }",
-          '  Compress-Archive -LiteralPath $bridgeBundle -DestinationPath $bridgeZip -Force',
+          "  $bridgeTmp = Join-Path ([System.IO.Path]::GetTempPath()) ('kidzy-git-bridge-' + [guid]::NewGuid().ToString())",
+          '  New-Item -ItemType Directory -Path $bridgeTmp | Out-Null',
+          "  $bridgeStagedZip = Join-Path $bridgeTmp 'transfer.zip'",
+          '  Compress-Archive -LiteralPath $bridgeBundle -DestinationPath $bridgeStagedZip',
+          '  Move-Item -LiteralPath $bridgeStagedZip -Destination $bridgeZip -Force',
           '  Remove-Item -LiteralPath $bridgeBundle -Force',
+          '  Remove-Item -LiteralPath $bridgeTmp -Recurse -Force',
           '  Write-Host "Saved to $bridgeZip - Send this ZIP through Talk and download it in VDI." -ForegroundColor Green',
           '}'
         ]).join('\n');
@@ -511,12 +561,7 @@
         pipeStep5.textContent = "Cleans up temp files";
 
         // STEP 1 (MAC: EXPORT BUNDLE & ZIP)
-        const macCommand = `BUNDLE="${bundleName}"
-ZIP="${zipName}"
-git bundle create "$HOME/Downloads/$BUNDLE" ${base}..${branch}
-(cd "$HOME/Downloads" && zip -q -m "$ZIP" "$BUNDLE")
-echo "✔ Saved to ~/Downloads/$ZIP - Send this file to Talk!"`;
-        step1Code.textContent = macCommand;
+        step1Code.textContent = macHostCommand('push', branch, base, bundleName, zipName);
 
         // STEP 2 (VDI: AUTO-UNZIP, CLONE IF MISSING, FETCH, PUSH & CLEANUP)
         const vdiCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (-not (Test-Path $zip)) { $zip = (Get-ChildItem "C:\\Users\\${vdiUsername}\\Downloads" -Filter "*.zip" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName }; $tmp = "C:\\Users\\${vdiUsername}\\Downloads\\_bundle_tmp"; if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }; Expand-Archive -Path $zip -DestinationPath $tmp -Force; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch "$tmp\\${bundleName}" ${branch}:${branch}; git push origin ${branch}; Remove-Item $tmp -Recurse -Force; Remove-Item $zip -Force; Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" -ForegroundColor Green`;
@@ -530,33 +575,24 @@ echo "✔ Saved to ~/Downloads/$ZIP - Send this file to Talk!"`;
         step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and download it on your Mac.`;
 
         step2Title.textContent = `On Your Mac Terminal`;
-        step2Subtitle.textContent = `Automates unzipping the downloaded archive, fetching branch into local repo, and checking it out`;
+        step2Subtitle.textContent = `Run inside your local project repository. Requires a clean working tree; fast-forwards the branch and keeps transfer files if a step fails.`;
         step2Badge1.textContent = `Auto-Unzip Included`;
         step2Badge2.textContent = `Auto-Checkout`;
         step2Badge2.style.display = 'inline-block';
         step2BtnText.textContent = `Copy Mac Pull Command`;
 
-        pipeStep1.textContent = "Unzips .zip file in ~/Downloads";
-        pipeStep2.textContent = "Finds bundle automatically";
+        pipeStep1.textContent = "Unzips the expected ZIP in Downloads";
+        pipeStep2.textContent = "Verifies bundle and shared history";
         pipeStep3.textContent = "Fetches branch from bundle";
-        pipeStep4.textContent = "Checks out branch locally";
-        pipeStep5.textContent = "Cleans up bundle & zip";
+        pipeStep4.textContent = "Checks out / fast-forwards branch";
+        pipeStep5.textContent = "Cleans up only after success";
 
         // STEP 1 (VDI: PULL LATEST GITLAB & BUNDLE TO ZIP)
         const vdiExportCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch origin; git checkout ${branch} 2>$null; if ($LASTEXITCODE -ne 0) { git checkout -b ${branch} origin/${branch} } else { git pull origin ${branch} }; $bundle = "C:\\Users\\${vdiUsername}\\Downloads\\${bundleName}"; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (Test-Path $bundle) { Remove-Item $bundle -Force }; if (Test-Path $zip) { Remove-Item $zip -Force }; git bundle create $bundle ${base}..${branch}; Compress-Archive -Path $bundle -DestinationPath $zip -Force; Remove-Item $bundle -Force; Write-Host "✔ Saved to $zip - Send this file to Talk!" -ForegroundColor Green`;
         step1Code.textContent = vdiExportCommand;
 
         // STEP 2 (MAC: AUTO-UNZIP, FETCH & CHECKOUT BRANCH)
-        const macImportCommand = `ZIP="$HOME/Downloads/${zipName}"
-[ -f "$ZIP" ] || ZIP=$(ls -t "$HOME/Downloads"/*.zip 2>/dev/null | head -n 1)
-TMP="$HOME/Downloads/_bundle_tmp"
-rm -rf "$TMP" && mkdir -p "$TMP"
-unzip -q -o "$ZIP" -d "$TMP"
-git fetch "$TMP/${bundleName}" "${branch}:${branch}" --force
-git checkout "${branch}"
-rm -rf "$TMP" "$ZIP"
-echo "✔ Successfully updated and checked out ${branch} on your Mac!"`;
-        step2Code.textContent = macImportCommand;
+        step2Code.textContent = macHostCommand('pull', branch, base, bundleName, zipName);
       }
       if (windowsHost) {
         if (currentMode === 'push') {
@@ -567,7 +603,7 @@ echo "✔ Successfully updated and checked out ${branch} on your Mac!"`;
         } else {
           step1FooterText.innerHTML = `After running: drag the generated <code class="text-slate-200 font-mono">${zipName}</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and download it on your Windows computer.`;
           step2Title.textContent = 'On Your Windows Computer — PowerShell';
-          step2Subtitle.textContent = 'Run inside your local project repository. Imports the bundle and fast-forwards the branch; keeps transfer files if a step fails.';
+          step2Subtitle.textContent = 'Run inside your local project repository. Requires a clean working tree; fast-forwards the branch and keeps transfer files if a step fails.';
           step2BtnText.textContent = 'Copy Windows Pull Command';
           pipeStep1.textContent = 'Unzips the expected ZIP in Downloads';
           step2Code.textContent = windowsHostCommand('pull', branch, base, bundleName, zipName);
