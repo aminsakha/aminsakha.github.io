@@ -30,6 +30,7 @@
       darkMode: 'class',
       theme: {
         extend: {
+          fontSize: { xs: ['0.875rem', '1.375rem'], sm: ['1rem', '1.5rem'], base: ['1.375rem', '1.75rem'], lg: ['1.5rem', '2rem'] },
           fontFamily: {
             sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
             mono: ['JetBrains Mono', 'Fira Code', 'Menlo', 'Consolas', 'monospace']
@@ -52,7 +53,7 @@
     .host-os-button {
       display: inline-flex; align-items: center; gap: 5px;
       padding: 9px 12px; border: 1px solid transparent; border-radius: 8px;
-      color: #94a3b8; font-size: 12px; font-weight: 600; cursor: pointer;
+      color: #cbd5e1; font-size: 16px; font-weight: 600; cursor: pointer;
       transition: background-color 150ms, color 150ms, border-color 150ms;
     }
     .host-os-button span { width: 10px; }
@@ -63,41 +64,67 @@
 
     .identity-panel { border-top:1px solid #263247; padding-top:20px; }
     .identity-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
-    .identity-heading h2 { font-size:14px; font-weight:600; color:#f1f5f9; }
-    .identity-heading p,.identity-badge { font-size:11px; color:#94a3b8; margin-top:5px; }
+    .identity-heading h2 { font-size:18px; font-weight:600; color:#f1f5f9; }
+    .identity-heading p,.identity-badge { font-size:14px; color:#cbd5e1; margin-top:5px; }
     .identity-badge { border:1px solid #334155; border-radius:20px; padding:4px 9px; white-space:nowrap; }
-    .profile-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
+    .profile-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
     .profile-card { position:relative; display:flex; align-items:center; gap:10px; text-align:left; padding:14px 12px; border:1px solid #334155; border-radius:12px; background:#0b1220; min-width:0; cursor:pointer; transition:background .15s,border-color .15s; }
     .profile-card:hover { background:#1e293b; border-color:#64748b; }
     .profile-card[aria-pressed="true"] { background:#25234d; border-color:#818cf8; box-shadow:0 0 0 1px #818cf8; }
     .profile-card:focus-visible { outline:2px solid #c7d2fe; outline-offset:4px; }
     .profile-avatar { width:42px; height:42px; flex-shrink:0; border-radius:50%; background:#312e58; display:flex; align-items:center; justify-content:center; color:#c7d2fe; font-size:13px; font-weight:600; overflow:hidden; }
     .profile-text { min-width:0; }
-    .profile-name { display:block; font-size:12px; font-weight:600; color:#e2e8f0; line-height:1.5; }
-    .profile-username { display:block; font:10px 'JetBrains Mono',monospace; color:#94a3b8; margin-top:4px; overflow-wrap:anywhere; }
-    .profile-check { position:absolute; right:7px; top:5px; font-size:11px; color:#c7d2fe; }
+    .profile-name { display:block; font-size:16px; font-weight:600; color:#e2e8f0; line-height:1.5; }
+    .profile-username { display:block; font:14px 'JetBrains Mono',monospace; color:#cbd5e1; margin-top:4px; overflow-wrap:anywhere; }
+    .profile-check { position:absolute; right:7px; top:5px; font-size:14px; color:#c7d2fe; }
     .identity-input-row { display:flex; align-items:center; gap:16px; margin-top:16px; }
     .identity-field { flex:0 0 260px; }
-    .identity-field label { display:block; font-size:11px; font-weight:600; color:#cbd5e1; margin-bottom:7px; }
-    .identity-field input { width:100%; background:#0b1220; border:1px solid #475569; border-radius:8px; padding:10px 12px; color:#f1f5f9; font:12px 'JetBrains Mono',monospace; }
+    .identity-field label { display:block; font-size:14px; font-weight:600; color:#cbd5e1; margin-bottom:7px; }
+    .identity-field input { width:100%; background:#0b1220; border:1px solid #475569; border-radius:8px; padding:10px 12px; color:#f1f5f9; font:16px 'JetBrains Mono',monospace; }
     .identity-field input:focus { outline:2px solid #818cf8; outline-offset:2px; }
-    #identityHint { font-size:11px; line-height:1.7; color:#94a3b8; max-width:420px; }
+    #identityHint { font-size:14px; line-height:1.7; color:#cbd5e1; max-width:420px; }
     button:disabled { opacity:.45; cursor:not-allowed; }
     @media(max-width:900px) { .profile-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     @media(max-width:540px) { .identity-badge { display:none; } .identity-input-row { flex-direction:column; align-items:stretch; gap:8px; } .identity-field { flex:auto; } .profile-card { padding:12px 9px; gap:8px; } .profile-avatar { width:34px; height:34px; } }
 
     .code-preview { position:relative; }
-    .code-preview pre { margin:0; white-space:pre; overflow-x:auto; }
-    .code-preview.is-collapsed pre { max-height:140px; overflow-y:hidden; }
+    .code-preview pre { margin:0; white-space:pre; overflow-x:auto; font-size:0.875rem; line-height:1.375rem; }
+    .code-preview.is-collapsed pre { max-height:calc(6 * 1.375rem + 2rem); overflow-y:hidden; }
     .code-preview.is-collapsed::after { content:''; position:absolute; bottom:0; left:1px; right:1px; height:26px; background:linear-gradient(transparent,#080d19); border-radius:0 0 12px 12px; pointer-events:none; }
-    .code-toggle { display:block; width:100%; padding:9px 12px; text-align:left; color:#a5b4fc; font-size:11px; font-weight:600; border-radius:8px; }
+    .code-toggle { display:block; width:100%; padding:9px 12px; text-align:left; color:#a5b4fc; font-size:14px; font-weight:600; border-radius:8px; }
     .code-toggle:hover { background:#1e293b; color:#e0e7ff; }
     .code-toggle:focus-visible { outline:2px solid #a5b4fc; outline-offset:2px; }
     .code-toggle[hidden] { display:none; }
-    #commandPipeline { display:flex; flex-wrap:wrap; gap:5px 9px; color:#94a3b8; font-size:11px; }
+    #commandPipeline { display:flex; flex-wrap:wrap; gap:5px 9px; color:#cbd5e1; font-size:14px; }
     #commandPipeline > div { display:inline-flex; align-items:center; gap:6px; background:none; border:0; padding:0; border-radius:0; }
     #commandPipeline > div > span:first-child { display:none; }
     #commandPipeline > div:not(:last-child)::after { content:'→'; color:#475569; }
+
+    /* Keep readable controls and clear hierarchy without changing the font families. */
+    [role="group"] button, #step1Btn, #step2Btn, #branchName, label { font-size:1rem; line-height:1.5; }
+    h2 { font-size:1.125rem; line-height:1.5; }
+    #step1Title, #step2Title { font-size:1.125rem; }
+    h1, #step2Title + span { overflow-wrap:anywhere; }
+    header h1 { flex-wrap:wrap; }
+    .profile-name { font-weight:500; }
+    .profile-username { line-height:1.5; }
+    .identity-badge { font-size:12px; }
+    input::placeholder { color:#94a3b8; opacity:1; }
+    #btnModePush, #btnModePull { font-size:0.875rem; }
+    #step2Title { min-width:0; }
+    @media(max-width:540px) {
+      header h1 { font-size:1.125rem; }
+      [aria-label="Target project"] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+      [aria-label="Target project"] button { padding:8px; text-align:left; }
+      [aria-label="Target project"] button > span { flex-shrink:0; }
+      .identity-heading { flex-wrap:wrap; }
+      .profile-card { display:grid; grid-template-columns:34px minmax(0,1fr); align-items:center; }
+      .profile-text { display:contents; }
+      .profile-name { grid-column:2; }
+      .profile-username { grid-column:1 / -1; margin-top:0; }
+      .profile-name { font-size:0.9375rem; }
+      #step2Title { flex-basis:100%; }
+    }
 
     pre::-webkit-scrollbar {
       height: 6px;
@@ -129,9 +156,9 @@
         <div>
           <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
             Kidzy VDI Git Bridge
-            <span id="headerBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Auto-Unzip &amp; Push</span>
+            <span id="headerBadge" class="text-[14px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Auto-Unzip &amp; Push</span>
           </h1>
-          <p id="environmentDescription" class="text-xs text-slate-400 hidden sm:block">Automated air-gapped commit transport between Mac &amp; Windows Horizon VDI</p>
+          <p id="environmentDescription" class="text-xs text-slate-300 hidden sm:block">Automated air-gapped commit transport between Mac &amp; Windows Horizon VDI</p>
         </div>
       </div>
 
@@ -142,12 +169,12 @@
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
             <span>Push (Mac &rarr; VDI)</span>
           </button>
-          <button type="button" id="btnModePull" onclick="setMode('pull')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-400 hover:text-slate-200">
+          <button type="button" id="btnModePull" onclick="setMode('pull')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-300 hover:text-slate-200">
             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
             <span>Pull (VDI &rarr; Mac)</span>
           </button>
         </div>
-        <span class="text-xs text-slate-400 font-mono hidden md:inline ml-2">User: <strong id="vdiUsernameLabel" class="text-slate-200">Not selected</strong></span>
+        <span class="text-xs text-slate-300 font-mono hidden md:inline ml-2">User: <strong id="vdiUsernameLabel" class="text-slate-200">Not selected</strong></span>
       </div>
     </div>
   </header>
@@ -160,7 +187,7 @@
       <!-- Project Switcher -->
       <div class="space-y-3 border-b border-slate-800/80 pb-4 min-w-0">
         <div>
-          <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Target Project</p>
+          <p class="text-[14px] font-semibold uppercase tracking-wider text-slate-300">Target Project</p>
           <div class="flex flex-wrap gap-2 mt-1.5" role="group" aria-label="Target project">
             <button type="button" id="btnProjVidzy" onclick="selectProject('vidzy')" aria-pressed="true" class="px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 transition border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 bg-brand-600 text-white shadow-sm shadow-brand-600/30 border-brand-500">
               <span class="w-2 h-2 rounded-full bg-emerald-400" aria-hidden="true"></span>Vidzy Android
@@ -176,7 +203,7 @@
             </button>
           </div>
         </div>
-        <div class="text-xs font-mono text-slate-400 bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800 flex items-center gap-2 min-w-0">
+        <div class="text-xs font-mono text-slate-300 bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-800 flex items-center gap-2 min-w-0">
           <span class="text-indigo-400 shrink-0">Remote:</span>
           <span id="repoUrlText" class="text-slate-200 truncate">http://gp.devpod.ir/pod/kidzyland/vidzy/kidzy.vidzy.android.git</span>
         </div>
@@ -189,7 +216,7 @@
             <button type="button" id="hostMacOS" onclick="setHostOS('macos')" aria-pressed="true" class="host-os-button host-os-selected"><span aria-hidden="true">✓</span> macOS · Terminal</button>
             <button type="button" id="hostWindows" onclick="setHostOS('windows')" aria-pressed="false" class="host-os-button"><span aria-hidden="true"></span> Windows · PowerShell</button>
           </div>
-          <p class="text-[10px] text-slate-400">Choose your development computer. VDI always uses Windows PowerShell.</p>
+          <p class="text-[12px] text-slate-300">Choose your development computer. VDI always uses Windows PowerShell.</p>
         </div>
       </div>
 
@@ -215,7 +242,7 @@
           <input type="text" id="branchName" value="fix/general-hotfix" 
             class="w-full px-3 py-2.5 rounded-lg bg-[#0b1220] border border-slate-700/90 text-slate-100 font-mono text-xs focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition" 
             placeholder="e.g. fix/general-hotfix">
-          <p class="text-[10px] text-slate-400">Auto-sanitizes slashes for the archive filename.</p>
+          <p class="text-[12px] text-slate-300">Auto-sanitizes slashes for the archive filename.</p>
         </div>
 
         <!-- Generated Archive Name Display -->
@@ -225,7 +252,7 @@
             <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
             <span id="archiveNamePreview">fix-general-hotfix.zip</span>
           </div>
-          <p class="text-[10px] text-slate-400" id="archiveHintText">Full branch history included. ZIP files may be larger.</p>
+          <p class="text-[12px] text-slate-300" id="archiveHintText">Full branch history included. ZIP files may be larger.</p>
         </div>
       </div>
     </section>
@@ -242,7 +269,7 @@
               <h2 id="step1Title" class="text-sm font-bold text-white flex items-center gap-2">
                 On Your Mac &mdash; Package Bundle &amp; Zip
               </h2>
-              <p id="step1Subtitle" class="text-xs text-slate-400">Run inside your repository terminal on your Mac</p>
+              <p id="step1Subtitle" class="text-xs text-slate-300">Run inside your repository terminal on your Mac</p>
             </div>
           </div>
           <button id="step1Btn" onclick="copyCommand('step1Code', this)" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition shadow-sm">
@@ -256,7 +283,7 @@
         </div>
         <button type="button" id="step1Toggle" class="code-toggle" aria-expanded="false" aria-controls="step1Preview" onclick="toggleCodePreview(1)">Show full script</button>
         
-        <div class="mt-3 flex items-center gap-2 text-xs text-slate-400">
+        <div class="mt-3 flex items-center gap-2 text-xs text-slate-300">
           <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
           <span id="step1FooterText">After running: drag the generated <code class="text-slate-200 font-mono" id="zipNameLabel1">fix-general-hotfix.zip</code> into <strong>Talk Web («صندوق پیام ها»)</strong> and click download in VDI.</span>
         </div>
@@ -268,12 +295,12 @@
           <div class="flex items-center space-x-3">
             <span class="h-7 w-7 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-xs">2</span>
             <div>
-              <div class="flex items-center gap-2">
+              <div class="flex flex-wrap items-center gap-2">
                 <h2 id="step2Title" class="text-sm font-bold text-white">In VDI PowerShell</h2>
-                <span id="step2Badge1" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Auto-Unzip Included</span>
-                <span id="step2Badge2" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">Auto-Clones if missing</span>
+                <span id="step2Badge1" class="text-[12px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Auto-Unzip Included</span>
+                <span id="step2Badge2" class="text-[12px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-400 border border-indigo-500/30">Auto-Clones if missing</span>
               </div>
-              <p id="step2Subtitle" class="text-xs text-slate-400 mt-0.5">Automates unzipping, repo verification, fetching bundle, pushing to GitLab, and cleanup</p>
+              <p id="step2Subtitle" class="text-xs text-slate-300 mt-0.5">Automates unzipping, repo verification, fetching bundle, pushing to GitLab, and cleanup</p>
             </div>
           </div>
           <button id="step2Btn" onclick="copyCommand('step2Code', this)" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-sm">
@@ -316,7 +343,7 @@
 
   </main>
 
-  <footer class="mt-auto border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-400">
+  <footer class="mt-auto border-t border-slate-800/80 py-4 px-4 text-center text-xs text-slate-300">
     <p>Kidzy VDI Git Bridge &bull; Built for zero-friction push and automated unzipping in air-gapped environments</p>
   </footer>
 
@@ -401,14 +428,14 @@
       currentMode = mode;
       if (mode === 'push') {
         btnModePush.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30";
-        btnModePull.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-400 hover:text-slate-200";
+        btnModePull.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-300 hover:text-slate-200";
         headerBadge.textContent = "Auto-Unzip & Push";
-        headerBadge.className = "text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
+        headerBadge.className = "text-[14px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30";
       } else {
         btnModePull.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30";
-        btnModePush.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-400 hover:text-slate-200";
+        btnModePush.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-300 hover:text-slate-200";
         headerBadge.textContent = "Auto-Bundle & Pull";
-        headerBadge.className = "text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30";
+        headerBadge.className = "text-[14px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30";
       }
       generate();
     }
