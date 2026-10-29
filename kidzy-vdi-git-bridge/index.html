@@ -893,7 +893,7 @@ Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" 
       document.getElementById('identityHint').textContent = identity.selected === 'sakha'
         ? 'Your VDI username is remembered on this browser. You can edit it anytime.'
         : identity.selected && identity.selected !== 'custom'
-        ? 'Name-based username for now. Edit it to match your Windows account; your correction is saved here.'
+        ? 'Your VDI username is filled in. Any edits are remembered on this browser.'
         : 'Use your Windows account username. Your choice is remembered on this browser.';
     }
     if (identity.selected) vdiUsernameInput.value = profileUsername(profiles.find(p => p.id === identity.selected));
