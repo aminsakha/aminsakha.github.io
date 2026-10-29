@@ -150,6 +150,19 @@
       #btnModePush, #btnModePull, .host-os-button, [aria-label="Target project"] button, .profile-card, .profile-avatar, .profile-check, .project-mark, .host-os-button span, #btnModePush svg, #btnModePull svg { transition:none; transform:none; }
     }
 
+    /* Reserve username space so profile switches cannot reflow the header. */
+    header .bridge-header-user { display:none; white-space:nowrap; }
+    @media(min-width:768px) {
+      header .bridge-header-user { display:inline-block; width:20ch; flex:0 0 20ch; overflow:hidden; text-overflow:ellipsis; }
+    }
+    @media(min-width:1024px) {
+      header .bridge-header-layout { display:grid; grid-template-columns:minmax(0,1fr) auto; }
+      .bridge-header-brand { min-width:0; }
+      .bridge-header-brand > div:last-child { min-width:0; }
+      #environmentDescription { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .bridge-header-actions { flex-shrink:0; }
+    }
+
     pre::-webkit-scrollbar {
       height: 6px;
       width: 6px;
@@ -170,8 +183,8 @@
 
   <!-- Header -->
   <header class="border-b border-slate-800/80 bg-[#0e1626]/90 backdrop-blur sticky top-0 z-30 px-4 sm:px-6 py-3.5">
-    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
+    <div class="bridge-header-layout max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="bridge-header-brand flex items-center space-x-3">
         <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-brand-500/25">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -186,7 +199,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="bridge-header-actions flex items-center gap-2">
         <!-- Sync Direction Toggle Tabs -->
         <div class="bg-slate-900/90 p-1 rounded-xl border border-slate-800 flex items-center gap-1 shadow-inner">
           <button type="button" id="btnModePush" aria-pressed="true" onclick="setMode('push')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-brand-600 text-white shadow-sm shadow-brand-600/30">
@@ -198,7 +211,7 @@
             <span>Pull (VDI &rarr; Mac)</span>
           </button>
         </div>
-        <span class="text-xs text-slate-300 font-mono hidden md:inline ml-2">User: <strong id="vdiUsernameLabel" class="text-slate-200">Not selected</strong></span>
+        <span class="bridge-header-user text-xs text-slate-300 font-mono hidden md:inline ml-2">User: <strong id="vdiUsernameLabel" class="text-slate-200">Not selected</strong></span>
       </div>
     </div>
   </header>
