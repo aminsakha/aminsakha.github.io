@@ -822,6 +822,8 @@ Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" 
       refreshCodePreviews();
     }
 
+    const copyFeedbackTimers = new WeakMap();
+
     function copyCommand(elementId, btn) {
       const el = document.getElementById(elementId);
       if (!el || btn.disabled) return;
@@ -837,25 +839,23 @@ Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" 
       document.execCommand('copy');
       document.body.removeChild(ta);
 
-      const originalHTML = btn.innerHTML;
+      const label = btn.querySelector('span');
+      clearTimeout(copyFeedbackTimers.get(btn));
       btn.classList.add('bg-teal-500', 'text-slate-950', 'font-bold');
       btn.classList.remove('bg-indigo-600', 'bg-emerald-600', 'hover:bg-indigo-500', 'hover:bg-emerald-500');
-      btn.innerHTML = `
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-        </svg>
-        <span>Copied!</span>
-      `;
+      label.textContent = 'Copied!';
 
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
+      copyFeedbackTimers.set(btn, setTimeout(() => {
         btn.classList.remove('bg-teal-500', 'text-slate-950', 'font-bold');
         if (elementId === 'step1Code') {
           btn.classList.add('bg-indigo-600', 'hover:bg-indigo-500');
         } else {
           btn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
         }
-      }, 1600);
+        // Recompute from the current OS and mode instead of restoring stale markup.
+        generate();
+        copyFeedbackTimers.delete(btn);
+      }, 1600));
     }
 
     const profiles = [
