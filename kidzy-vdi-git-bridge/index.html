@@ -293,7 +293,7 @@
         </div>
 
         <div class="relative group">
-          <pre class="bg-[#080d19] p-4 rounded-xl text-sky-400 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-900 shadow-inner whitespace-pre-wrap break-all"><code id="step2Code"></code></pre>
+          <pre class="bg-[#080d19] p-4 rounded-xl text-sky-400 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-900 shadow-inner whitespace-pre"><code id="step2Code"></code></pre>
         </div>
       </section>
 
@@ -670,7 +670,35 @@
         step1Code.textContent = macHostCommand('push', branch, bundleName, zipName);
 
         // STEP 2 (VDI: AUTO-UNZIP, CLONE IF MISSING, FETCH, PUSH & CLEANUP)
-        const vdiCommand = `git config --global credential.protectUnencryptedRemotes false; Set-Location "C:\\Users\\${vdiUsername}"; if (-not (Test-Path "${proj.folder}")) { git clone ${proj.cloneUrl} ${proj.folder} }; $zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"; if (-not (Test-Path $zip)) { $zip = (Get-ChildItem "C:\\Users\\${vdiUsername}\\Downloads" -Filter "*.zip" | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName }; $tmp = "C:\\Users\\${vdiUsername}\\Downloads\\_bundle_tmp"; if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }; Expand-Archive -Path $zip -DestinationPath $tmp -Force; Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"; git fetch "$tmp\\${bundleName}" ${branch}:${branch}; git push origin ${branch}; Remove-Item $tmp -Recurse -Force; Remove-Item $zip -Force; Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" -ForegroundColor Green`;
+        const vdiCommand = `git config --global credential.protectUnencryptedRemotes false
+Set-Location "C:\\Users\\${vdiUsername}"
+if (-not (Test-Path "${proj.folder}")) {
+  git clone ${proj.cloneUrl} ${proj.folder}
+}
+
+$zip = "C:\\Users\\${vdiUsername}\\Downloads\\${zipName}"
+if (-not (Test-Path $zip)) {
+  $zip = (
+    Get-ChildItem "C:\\Users\\${vdiUsername}\\Downloads" -Filter "*.zip" |
+      Sort-Object LastWriteTime -Descending |
+      Select-Object -First 1
+  ).FullName
+}
+
+$tmp = "C:\\Users\\${vdiUsername}\\Downloads\\_bundle_tmp"
+if (Test-Path $tmp) {
+  Remove-Item $tmp -Recurse -Force
+}
+
+Expand-Archive -Path $zip -DestinationPath $tmp -Force
+Set-Location "C:\\Users\\${vdiUsername}\\${proj.folder}"
+
+git fetch "$tmp\\${bundleName}" ${branch}:${branch}
+git push origin ${branch}
+
+Remove-Item $tmp -Recurse -Force
+Remove-Item $zip -Force
+Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" -ForegroundColor Green`;
         step2Code.textContent = vdiCommand;
 
       } else {
