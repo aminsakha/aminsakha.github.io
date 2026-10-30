@@ -877,8 +877,23 @@ Write-Host "✔ Successfully unzipped, fetched and pushed ${branch} to GitLab!" 
     }
     function toggleCodePreview(step) {
       const button = document.getElementById(`step${step}Toggle`);
+      const preview = document.getElementById(`step${step}Preview`);
+      const pre = preview.querySelector('pre');
+      const startHeight = preview.getBoundingClientRect().height;
+      preview.getAnimations().forEach(animation => animation.cancel());
       button.setAttribute('aria-expanded', String(button.getAttribute('aria-expanded') !== 'true'));
       refreshCodePreviews();
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const endHeight = pre.getBoundingClientRect().height;
+      const delta = endHeight - startHeight;
+      // A damped spring curve, measured from the currently rendered height so
+      // reversing direction mid-animation stays continuous.
+      const offsets = [0, .36, .58, .76, .9, 1];
+      const progress = [0, 1.025, .99, 1.004, .999, 1];
+      preview.animate(progress.map((value, index) => ({
+        height: `${Math.max(0, startHeight + delta * value)}px`,
+        overflow: 'hidden', offset: offsets[index]
+      })), { duration:460, easing:'ease-out' });
     }
 
     const copyFeedbackTimers = new WeakMap();
